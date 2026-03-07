@@ -1,0 +1,163 @@
+{
+  "metadata": {
+    "scene_id": "lesson_physics_01",
+    "scene_name": "Gravity Learning Level",
+    "author": "TaPTaP Engine",
+    "version": "1.0",
+    "description": "Interactive physics learning scene demonstrating gravity and object interaction."
+  },
+
+  "world": {
+    "gravity": [0, -9.8],
+    "timeStep": 0.016,
+    "velocityIterations": 8,
+    "positionIterations": 3
+  },
+
+  "assets": {
+    "textures": [
+      "player.png",
+      "crate.png",
+      "background.png",
+      "ui_button.png"
+    ],
+    "fonts": [
+      "main_font.ttf"
+    ],
+    "audio": [
+      "bg_music.mp3",
+      "click.wav",
+      "collision.wav"
+    ]
+  },
+
+  "entities": [
+    {
+      "id": "player",
+      "transform": {
+        "position": [0, 150],
+        "rotation": 0,
+        "scale": [1, 1]
+      },
+
+      "sprite": {
+        "texture": "player.png",
+        "width": 64,
+        "height": 64,
+        "layer": 1
+      },
+
+      "animation": {
+        "frames": [0, 1, 2, 3],
+        "frameDuration": 0.12,
+        "loop": true
+      },
+
+      "physics": {
+        "bodyType": "dynamic",
+        "fixedRotation": false,
+        "linearDamping": 0.1,
+
+        "fixture": {
+          "shape": "box",
+          "width": 32,
+          "height": 32,
+          "density": 1.0,
+          "friction": 0.3,
+          "restitution": 0.2
+        }
+      }
+    },
+
+    {
+      "id": "crate_01",
+      "transform": {
+        "position": [200, 100],
+        "rotation": 0,
+        "scale": [1, 1]
+      },
+
+      "sprite": {
+        "texture": "crate.png",
+        "width": 64,
+        "height": 64,
+        "layer": 1
+      },
+
+      "physics": {
+        "bodyType": "dynamic",
+
+        "fixture": {
+          "shape": "box",
+          "width": 32,
+          "height": 32,
+          "density": 0.8,
+          "friction": 0.6,
+          "restitution": 0.1
+        }
+      }
+    },
+
+    {
+      "id": "ground",
+      "transform": {
+        "position": [0, -50]
+      },
+
+      "physics": {
+        "bodyType": "static",
+
+        "fixture": {
+          "shape": "box",
+          "width": 1000,
+          "height": 20,
+          "density": 0,
+          "friction": 0.9,
+          "restitution": 0.0
+        }
+      }
+    }
+  ],
+
+  "ui": [
+    {
+      "id": "start_button",
+      "type": "texture_button",
+
+      "text": "Start",
+      "position": [400, 300],
+      "size": [200, 80],
+
+      "texture": "ui_button.png",
+
+      "action": {
+        "type": "change_state",
+        "target": "gameplay"
+      },
+
+      "audio": {
+        "clickSound": "click.wav"
+      }
+    },
+
+    {
+      "id": "title_text",
+      "type": "text",
+
+      "content": "Gravity Lesson",
+      "position": [400, 500],
+
+      "font": "main_font.ttf",
+      "fontSize": 48,
+      "color": [255, 255, 255]
+    }
+  ],
+
+  "audio": {
+    "backgroundMusic": {
+      "track": "bg_music.mp3",
+      "loop": true,
+      "volume": 0.6
+    }
+  }
+}
