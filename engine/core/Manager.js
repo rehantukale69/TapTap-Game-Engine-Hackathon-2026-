@@ -22,8 +22,8 @@ export class Manager {
 
     this.Engine.InitializeTextures();
     this.Engine.InitializeFont();
-    this.Engine.LoadTexture('Resources/1.png', 1);
-    this.Engine.LoadTexture('Resources/2.png', 2);
+    this.Engine.LoadTexture('../../Resources/1.png', 1);
+    this.Engine.LoadTexture('../../Resources/2.png', 2);
 
 
     /*this.Shot = new TextButton(
@@ -31,11 +31,11 @@ export class Manager {
         this.Engine.glyphMap);
 
 
-    this.Engine.AddUI(this.Shot);
+    this.Engine.AddUI(this.Shot); */
 
     this.d = new TextureButton(
         0, 0, -400, 200, 200, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0);
-    this.Engine.AddUI(this.d); */
+    this.Engine.AddObject(this.d.RenderObject);
   };
 
   InitializeUISystem() {
@@ -48,13 +48,15 @@ export class Manager {
 
     let pos = this.UI.getMousePos();
 
-    /* if (this.d.MouseClicked(pos.x, pos.y) && this.UI.mouseClicked) {
-       console.log('CHod diya');
-     }
+    if (this.d.MouseClicked(pos.x, pos.y) && this.UI.mouseClicked) {
+      console.log('CHod diya');
+    }
 
-     if (this.Shot.MouseClicked(pos.x, pos.y) && this.UI.mouseClicked) {
-       console.log('HO Gya diya');
-     } */
+    /*
+
+    if (this.Shot.MouseClicked(pos.x, pos.y) && this.UI.mouseClicked) {
+      console.log('HO Gya diya');
+    } */
 
 
     this.UI.update();

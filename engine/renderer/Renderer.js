@@ -1,7 +1,7 @@
 import * as glMatrix from 'https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/esm/index.js';
 
 import {Shader} from './Shader.js';
-import {Text} from './Text.js';
+
 
 const NumberofVertices = 10000;
 const NumberofTextures = 32;
@@ -39,7 +39,6 @@ export class Renderer {
 
     this.sceneObjects = [];
     this.TextObjects = [];
-    this.UIObjects = [];
   }
 
   CreateBasicShaders(VertexData, FragmentData) {
@@ -283,9 +282,6 @@ export class Renderer {
     this.TextObjects.push(texts);
   };
 
-  AddUI(UIstuff) {
-    this.UIObjects.push(UIstuff);
-  }
 
 
   update() {
@@ -304,12 +300,6 @@ export class Renderer {
       text.update(this.glyphMap);
       this.AddVertexData(text.Vertexes);
       text.clear();
-    }
-
-    for (let UI of this.UIObjects) {
-      UI.update();
-      this.AddVertexData(UI.Vertexes);
-      UI.clear();
     }
 
 

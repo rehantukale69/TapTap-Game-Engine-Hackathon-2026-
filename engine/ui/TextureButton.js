@@ -1,7 +1,9 @@
-import {Vertex} from '../renderer/Basic.js';
+import {Object} from '../renderer/Object.js';
 
 export class TextureButton {
   constructor(x, y, z, w, h, r, g, b, alpha, slot, px, py, theta) {
+    this.RenderObject =
+        new Object(x, y, z, w, h, r, g, b, alpha, slot, px, py, theta);
     this.x = x;
     this.y = y;
     this.z = z;
@@ -15,13 +17,6 @@ export class TextureButton {
     this.alpha = alpha;
 
     this.slot = slot;
-
-    this.px = px;
-    this.py = py;
-    this.theta = theta;
-
-    this.Vertexes = [];
-
     this.Selected = false;
   }
 
@@ -39,36 +34,12 @@ export class TextureButton {
   }
 
   update() {
-    this.Vertexes.length = 0;
-
-    this.Vertexes.push(
-
-        new Vertex(
-            this.x, this.y, this.z, this.r, this.g, this.b, this.alpha,
-            this.slot, 1.0, 1.0, this.w / 2, this.h / 2, this.px, this.py,
-            this.theta),
-
-        new Vertex(
-            this.x, this.y, this.z, this.r, this.g, this.b, this.alpha,
-            this.slot, 1.0, 0.0, this.w / 2, -this.h / 2, this.px, this.py,
-            this.theta),
-
-        new Vertex(
-            this.x, this.y, this.z, this.r, this.g, this.b, this.alpha,
-            this.slot, 0.0, 0.0, -this.w / 2, -this.h / 2, this.px, this.py,
-            this.theta),
-
-        new Vertex(
-            this.x, this.y, this.z, this.r, this.g, this.b, this.alpha,
-            this.slot, 0.0, 1.0, -this.w / 2, this.h / 2, this.px, this.py,
-            this.theta));
-
     /*console.log(
         'Bounds:', this.x - this.w / 2, this.x + this.w / 2,
         this.y - this.h / 2, this.y + this.h / 2); */
   }
 
   clear() {
-    this.Vertexes.length = 0;
+    this.RenderObject.Vertxes.length = 0;
   }
 }

@@ -14,25 +14,26 @@ export class Simulation {
     const velocityIterations = 8;
     const positionIterations = 3;
 
+    this.world.step(dt, velocityIterations, positionIterations);
+
     for (const body of this.destroyQueue) {
       this.world.destroyBody(body);
     }
 
     this.destroyQueue.length = 0;
-    this.world.step(dt, velocityIterations, positionIterations);
   }
 
-  createBoxBody(Object, type = 'dynamic') {
-    const body = this.world.createBody(
-        {type: type, position: this.pl.Vec2(Object.x, Object.y)});
-
-    body.createFixture(
-        this.pl.Box(Object.w, Object.h), {density: 1, friction: 0.3});
-
+  createBoxBody(x, y, w, h, type = 'dynamic') {
+    const body =
+        this.world.createBody({type: type, position: this.pl.Vec2(x, y)});
     return body;
   }
 
   destroyBody(body) {
     this.destroyQueue.push(body);
+  }
+
+  ReturnWorld() {
+    return this.world;
   }
 }
