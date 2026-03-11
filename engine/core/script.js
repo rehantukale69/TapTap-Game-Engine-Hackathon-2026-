@@ -75,6 +75,7 @@ window.onload = () => {
   system.InitializeRenderer();
   system.InitializeSImultaion();
   system.InitializeUISystem();
+  system.InitializeStateManager();
 
 
   system.Render();

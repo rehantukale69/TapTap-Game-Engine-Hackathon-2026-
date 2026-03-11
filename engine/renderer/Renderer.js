@@ -39,6 +39,8 @@ export class Renderer {
 
     this.sceneObjects = [];
     this.TextObjects = [];
+
+    this.CameraPos = [0, 0, 0];
   }
 
   CreateBasicShaders(VertexData, FragmentData) {
@@ -294,6 +296,7 @@ export class Renderer {
     for (let obj of this.sceneObjects) {
       obj.update();
       this.AddVertexData(obj.Vertexes);
+      // console.log(obj);
     }
 
     for (let text of this.TextObjects) {
@@ -334,5 +337,10 @@ export class Renderer {
     this.IndicesCount = 0;
     this.Vertices = [];
     this.Indices = [];
+  }
+
+
+  ReturnCameraPos() {
+    return this.CameraPos
   }
 }

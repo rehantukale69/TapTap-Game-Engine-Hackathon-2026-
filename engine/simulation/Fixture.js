@@ -1,4 +1,5 @@
-import planck from 'planck-js';
+// import planck from
+// 'https://cdn.jsdelivr.net/npm/planck-js@latest/dist/planck.min.js';
 
 export class Fixture {
   constructor(
@@ -18,7 +19,7 @@ export class Fixture {
     this.body = body;
 
     this.shape =
-        planck.Box(this.w, this.h, planck.Vec2(this.x, this.y), tthis.heta);
+        planck.Box(this.w, this.h, planck.Vec2(this.x, this.y), this.theta);
     this.fixture = this.body.createFixture(this.shape, {
       density: this.density,
       friction: this.friction,
@@ -38,7 +39,8 @@ export class Fixture {
 
   update() {
     this.body.destroyFixture(this.fixture);
-    this.shape = planck.Box(this.w, this.h, planck.Vec2(x, y), this.theta);
+    this.shape =
+        planck.Box(this.w, this.h, planck.Vec2(this.x, this.y), this.theta);
     this.fixture = this.body.createFixture(this.shape, {
       density: this.density,
       friction: this.friction,

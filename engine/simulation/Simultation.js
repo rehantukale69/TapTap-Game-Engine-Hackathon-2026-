@@ -1,4 +1,5 @@
-import planck from 'planck-js';
+// import planck from
+// 'https://cdn.jsdelivr.net/npm/planck-js@latest/dist/planck.min.js';
 
 export class Simulation {
   constructor(gravity = [0, -10]) {
@@ -23,9 +24,12 @@ export class Simulation {
     this.destroyQueue.length = 0;
   }
 
-  createBoxBody(x, y, w, h, type = 'dynamic') {
-    const body =
-        this.world.createBody({type: type, position: this.pl.Vec2(x, y)});
+  createBoxBody(x, y, type = 'dynamic') {
+    const body = this.world.createBody({
+      type: type === 'static' ? 'static' : 'dynamic',
+      position: this.pl.Vec2(x, y)
+    });
+
     return body;
   }
 
