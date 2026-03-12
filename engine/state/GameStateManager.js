@@ -2,9 +2,12 @@ import {Entity} from '../entity/Entity.js';
 import {TextButton} from '../ui/TextButton.js';
 import {TextureButton} from '../ui/TextureButton.js';
 
+const SCALE = 50;
+
 export class StateManager {
   constructor(gravity, cameraPos, simulationWorld, glyphMap, engine) {
     this.Entities = [];
+    this.EntityMap = new Map();
     this.UI = [];
 
     this.gravity = gravity;
@@ -12,7 +15,9 @@ export class StateManager {
 
     this.simulationWorld = simulationWorld;
     this.glyphMap = glyphMap;
-    this.Engine = engine
+    this.Engine = engine;
+
+    this.Events = [];
   }
 
   /* =========================
@@ -55,8 +60,8 @@ export class StateManager {
 
         x: fix.x,
         y: fix.y,
-        w: fix.w,
-        h: fix.h,
+        w: fix.w * (SCALE * 2),
+        h: fix.h * (SCALE * 2),
 
         density: fix.density,
         friction: fix.friction,
@@ -83,9 +88,6 @@ export class StateManager {
   }
 
 
-  /* =========================
-        ENTITY LOADING
-     ========================= */
 
   LoadEntity(data) {
     const e = data.entity;
@@ -120,9 +122,6 @@ export class StateManager {
   }
 
 
-  /* =========================
-        UI SERIALIZATION
-     ========================= */
 
   SerializeTextButton(button) {
     return {
@@ -195,9 +194,6 @@ export class StateManager {
   }
 
 
-  /* =========================
-        UI LOADING
-     ========================= */
 
   LoadUI(data) {
     const uiElements = [];
@@ -254,18 +250,25 @@ export class StateManager {
     return uiElements;
   }
 
-  SyncEntities() {
-    this.Engine.sceneObjects = [];
+  SyncEngine() {
+    this.Engine.sceneObjects.length = 0;
+    this.Engine.TextObjects.length = 0;
 
     for (let e of this.Entities) {
       this.Engine.AddObject(e.RenderObject);
     }
+
+    for (let ui of this.UI) {
+      if (ui instanceof TextButton) {
+        this.Engine.AddText(ui.RenderText);
+
+      } else if (ui instanceof TextureButton) {
+        this.Engine.AddObject(ui.RenderObject);
+      }
+    }
   }
 
 
-  /* =========================
-        SAVE SCENE
-     ========================= */
 
   SaveGameData(sceneName) {
     const gameScene = {
@@ -296,9 +299,6 @@ export class StateManager {
   }
 
 
-  /* =========================
-        LOAD SCENE
-     ========================= */
 
   LoadGameData(sceneName) {
     const json = localStorage.getItem(sceneName);
@@ -322,7 +322,6 @@ export class StateManager {
     this.CameraPos = data.camera;
 
 
-    /* ---- clear old physics bodies ---- */
 
     for (let entity of this.Entities) {
       entity.RemoveAllFixtures();
@@ -331,7 +330,6 @@ export class StateManager {
     }
 
 
-    /* ---- load entities ---- */
 
     this.Entities = [];
 
@@ -340,21 +338,70 @@ export class StateManager {
     }
 
 
-    /* ---- load UI ---- */
 
     this.UI = this.LoadUI(data.ui);
+  }
 
-    this.SyncEntities();
+  SyncEngine() {
+    this.Engine.sceneObjects.length = 0;
+    this.Engine.TextObjects.length = 0;
+
+    for (let e of this.Entities) {
+      this.Engine.AddObject(e.RenderObject);
+    }
+
+    for (let ui of this.UI) {
+      if (ui instanceof TextButton) {
+        this.Engine.AddText(ui.RenderText);
+
+      } else if (ui instanceof TextureButton) {
+        this.Engine.AddObject(ui.RenderObject);
+      }
+    }
+  }
+
+  AddEvent(event) {
+    this.Events.push(event);
+  }
+
+  Handlevent(event) {
+    switch (event.type) {
+      case 'MOVE_ENTITY':
+        const e = this.EntityMap.get(event.entityID);
+
+        e.RenderObject.x += event.dx;
+        e.RenderObject.y += event.dy;
+        break;
+
+
+      case 'CHANGE_STATE':
+        this.gameState = event.state;
+        break;
+
+
+      case 'LOAD_SCENE':
+        this.LoadGameData(event.scene);
+        this.SyncEngine();
+        break;
+    }
+  }
+
+  update() {
+    for (let e of this.Entities) {
+      e.update();
+      console.log(e);
+    }
+
+    for (let event of this.Events) {
+      this.Handlevent(event);
+    }
   }
 
 
-
-  SyncUI() {
-    this.Engine.TextObjects = [];
-  }
 
   AddEntity(entity) {
     this.Entities.push(entity);
+    this.EntityMap.set(entity.ID, entity);
   }
 
   AddUI(UI) {

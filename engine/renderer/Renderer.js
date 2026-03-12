@@ -282,6 +282,7 @@ export class Renderer {
 
   AddText(texts) {
     this.TextObjects.push(texts);
+    console.log('Adding text:', texts);
   };
 
 
@@ -300,7 +301,10 @@ export class Renderer {
     }
 
     for (let text of this.TextObjects) {
-      text.update(this.glyphMap);
+      // console.log(text);
+
+      // if (!text.update) continue;
+      text.update();
       this.AddVertexData(text.Vertexes);
       text.clear();
     }

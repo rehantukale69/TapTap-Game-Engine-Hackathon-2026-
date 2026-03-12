@@ -1,6 +1,7 @@
 import * as glMatrix from 'https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/esm/index.js';
 
 import {Entity} from '../entity/Entity.js';
+import {GameLoader} from '../loader/GameLoader.js';
 import {Object} from '../renderer/Object.js';
 import {Renderer} from '../renderer/Renderer.js';
 import {Text} from '../renderer/Text.js';
@@ -31,14 +32,14 @@ export class Manager {
     this.Engine.LoadTexture('../../Resources/2.png', 2);
 
 
-    /*this.Shot = new TextButton(
+    this.Shot = new TextButton(
         'Kya Bolti Public', 0, 0, -400, 1.0, 1.0, 1.0, 1.0, 0.3, 0,
         this.Engine.glyphMap);
 
 
-    this.Engine.AddUI(this.Shot);
+    this.Engine.AddText(this.Shot.RenderText);
 
-    this.d = new TextureButton(
+    /*this.d = new TextureButton(
         0, 0, -400, 200, 200, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0);
     this.Engine.AddObject(this.d.RenderObject); */
   };
@@ -53,15 +54,15 @@ export class Manager {
 
     this.Entity1 = new Entity(
         0, 0, -400, 50, 50, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0, this.Simulation,
-        'dynamic');
-    // console.log(this.Entity1.AddFixture(0, 0, 50, 50, 1, 1, 1, false, 0.0));
-    // this.Engine.AddObject(this.Entity1.RenderObject);
+        'dynamic', 0);
+    console.log(this.Entity1.AddFixture(0, 0, 50, 50, 1, 1, 1, false, 0.0));
+    this.Engine.AddObject(this.Entity1.RenderObject);
 
     this.Entity2 = new Entity(
         0, -100, -400, 50, 50, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0,
-        this.Simulation, 'static');
-    // console.log(this.Entity2.AddFixture(0, 0, 50, 50, 1, 1, 1, false, 0.0));
-    // this.Engine.AddObject(this.Entity2.RenderObject);
+        this.Simulation, 'static', 1);
+    console.log(this.Entity2.AddFixture(0, 0, 50, 50, 1, 1, 1, false, 0.0));
+    this.Engine.AddObject(this.Entity2.RenderObject);
   };
 
   InitializeStateManager() {
@@ -69,8 +70,12 @@ export class Manager {
         this.gravity, this.Engine.ReturnCameraPos(), this.Simulation,
         this.Engine.glyphMap, this.Engine);
 
-    // this.StateManager.AddEntity(this.Entity1);
-    // this.StateManager.AddEntity(this.Entity2);
+
+
+    this.StateManager.AddEntity(this.Entity1);
+    this.StateManager.AddEntity(this.Entity2);
+    this.StateManager.AddUI(this.Shot);
+    this.StateManager.SyncEngine();
   }
   update() {};
   Render() {
@@ -88,8 +93,15 @@ export class Manager {
 
     if (this.UI.isDown('KeyA')) {
       this.StateManager.LoadGameData('scene1');
+      this.StateManager.SyncEngine();
 
-      console.log(this.StateManager.Entities);
+      // console.log(this.StateManager.Entities);
+    }
+
+    if (this.UI.isDown('KeyB')) {
+      this.StateManager.SaveGameData('scene1');
+
+      // console.log(this.StateManager.Entities);
     }
 
     /*
@@ -98,10 +110,13 @@ export class Manager {
       console.log('HO Gya diya');
     } */
 
-    this.Entity1.update();
-    this.Entity2.update();
+    // this.Entity1.update();
+    // this.Entity2.update();
 
+    this.StateManager.update();
 
+    // console.log(this.Entity1);
+    // console.log(this.Entity2);
 
     this.Engine.Render();
     requestAnimationFrame(this.Render);

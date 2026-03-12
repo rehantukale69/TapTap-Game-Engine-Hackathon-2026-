@@ -35,7 +35,7 @@ export class Entity {
     this.fixtureID++;
 
     const fix = new Fixture(
-        this.fixtureID, this.body, 0, 0, w / SCALE / 2, h / SCALE / 2, density,
+        this.fixtureID, this.body, x, y, w / SCALE / 2, h / SCALE / 2, density,
         friction, restitution, issensor, theta);
 
     this.fixtures.push(fix);
