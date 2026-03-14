@@ -1,5 +1,3 @@
-// import planck from
-// 'https://cdn.jsdelivr.net/npm/planck-js@latest/dist/planck.min.js';
 
 export class Fixture {
   constructor(

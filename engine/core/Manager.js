@@ -34,14 +34,15 @@ export class Manager {
 
     this.Shot = new TextButton(
         'Kya Bolti Public', 0, 0, -400, 1.0, 1.0, 1.0, 1.0, 0.3, 0,
-        this.Engine.glyphMap);
+        this.Engine.glyphMap,
+        {type: 'MOVE_ENTITY', entityID: 'Player', dx: 0.05, dy: 0});
 
 
     this.Engine.AddText(this.Shot.RenderText);
 
-    /*this.d = new TextureButton(
+    this.d = new TextureButton(
         0, 0, -400, 200, 200, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0);
-    this.Engine.AddObject(this.d.RenderObject); */
+    // this.Engine.AddObject(this.d.RenderObject);
   };
 
   InitializeUISystem() {
@@ -54,13 +55,13 @@ export class Manager {
 
     this.Entity1 = new Entity(
         0, 0, -400, 50, 50, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0, this.Simulation,
-        'dynamic', 0);
+        'dynamic', 'Player');
     console.log(this.Entity1.AddFixture(0, 0, 50, 50, 1, 1, 1, false, 0.0));
     this.Engine.AddObject(this.Entity1.RenderObject);
 
     this.Entity2 = new Entity(
         0, -100, -400, 50, 50, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0,
-        this.Simulation, 'static', 1);
+        this.Simulation, 'static', 'Ground');
     console.log(this.Entity2.AddFixture(0, 0, 50, 50, 1, 1, 1, false, 0.0));
     this.Engine.AddObject(this.Entity2.RenderObject);
   };
@@ -68,13 +69,16 @@ export class Manager {
   InitializeStateManager() {
     this.StateManager = new StateManager(
         this.gravity, this.Engine.ReturnCameraPos(), this.Simulation,
-        this.Engine.glyphMap, this.Engine);
+        this.Engine.glyphMap, this.Engine, this.UI);
 
 
 
     this.StateManager.AddEntity(this.Entity1);
     this.StateManager.AddEntity(this.Entity2);
     this.StateManager.AddUI(this.Shot);
+    this.StateManager.AddInputEvent(
+        {key: 'KeyY', event: {type: 'CHANGE_STATE', state: 'Menu'}});
+    // this.StateManager.AddUI(this.d);
     this.StateManager.SyncEngine();
   }
   update() {};
@@ -85,35 +89,36 @@ export class Manager {
     let pos = this.UI.getMousePos();
 
 
-    /* if (this.d.MouseClicked(pos.x, pos.y) && this.UI.mouseClicked) {
-        console.log('CHod diya');
-      } */
+    /*if (this.d.isInside(pos.x, pos.y) && this.UI.mouseClicked) {
+      console.log('CHod diya');
+    } */
 
     this.Simulation.step(this.fixedDT);
 
     if (this.UI.isDown('KeyA')) {
-      this.StateManager.LoadGameData('scene1');
+      this.StateManager.LoadfomDisk('scene1');
       this.StateManager.SyncEngine();
 
       // console.log(this.StateManager.Entities);
     }
 
     if (this.UI.isDown('KeyB')) {
-      this.StateManager.SaveGameData('scene1');
+      this.StateManager.SaveToDisk('scene1');
 
       // console.log(this.StateManager.Entities);
     }
 
-    /*
+    if (this.UI.isDown('KeyC')) {
+      // console.log(this.StateManager.Entities);
+    }
 
-    if (this.Shot.MouseClicked(pos.x, pos.y) && this.UI.mouseClicked) {
-      console.log('HO Gya diya');
-    } */
+
 
     // this.Entity1.update();
     // this.Entity2.update();
 
-    this.StateManager.update();
+    this.StateManager.update(pos.x, pos.y, this.UI.mouseClicked);
+    this.UI.endFrame();
 
     // console.log(this.Entity1);
     // console.log(this.Entity2);

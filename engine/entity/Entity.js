@@ -63,6 +63,16 @@ export class Entity {
     this.fixtures = [];
   }
 
+  GetEntityID() {
+    return this.ID;
+  }
+
+  DeleteEntity() {
+    this.RemoveAllFixtures();
+
+    if (this.body) this.World.destroyBody(this.body);
+  }
+
   update() {
     const pos = this.body.getPosition();
 

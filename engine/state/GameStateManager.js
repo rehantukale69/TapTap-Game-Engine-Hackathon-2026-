@@ -1,3 +1,4 @@
+
 import {Entity} from '../entity/Entity.js';
 import {TextButton} from '../ui/TextButton.js';
 import {TextureButton} from '../ui/TextureButton.js';
@@ -5,7 +6,7 @@ import {TextureButton} from '../ui/TextureButton.js';
 const SCALE = 50;
 
 export class StateManager {
-  constructor(gravity, cameraPos, simulationWorld, glyphMap, engine) {
+  constructor(gravity, cameraPos, simulationWorld, glyphMap, engine, UISystem) {
     this.Entities = [];
     this.EntityMap = new Map();
     this.UI = [];
@@ -14,10 +15,14 @@ export class StateManager {
     this.CameraPos = cameraPos;
 
     this.simulationWorld = simulationWorld;
+    this.UISystem = UISystem;
     this.glyphMap = glyphMap;
     this.Engine = engine;
 
     this.Events = [];
+
+    this.InputEvents = [];
+    this.gameState = 'Test';
   }
 
   /* =========================
@@ -48,7 +53,8 @@ export class StateManager {
 
         theta: obj.theta,
 
-        bodytype: entity.bodytype
+        bodytype: entity.bodytype,
+        id: entity.ID
       },
 
       fixtures: []
@@ -102,7 +108,7 @@ export class StateManager {
 
         e.px, e.py, e.theta,
 
-        this.simulationWorld, e.bodytype
+        this.simulationWorld, e.bodytype, e.id
 
     );
 
@@ -142,7 +148,8 @@ export class StateManager {
 
       scale: button.scale,
 
-      slot: button.slot
+      slot: button.slot,
+      action: button.action || null
 
     };
   }
@@ -171,9 +178,23 @@ export class StateManager {
       px: button.RenderObject.px,
       py: button.RenderObject.py,
 
-      theta: button.RenderObject.theta
+      theta: button.RenderObject.theta,
+      action: button.action || null
 
     };
+  }
+
+  SerializeInput(input) {
+    return {key: input.key, event: input.event || null};
+  }
+
+  SerializeInputEvents() {
+    const data = [];
+    for (let input of this.InputEvents) {
+      data.push(this.SerializeInput(input));
+    }
+
+    return data;
   }
 
 
@@ -196,11 +217,9 @@ export class StateManager {
 
 
   LoadUI(data) {
-    const uiElements = [];
-
     for (let ui of data || []) {
       if (ui.type === 'TextButton') {
-        uiElements.push(
+        this.UI.push(
 
             new TextButton(
 
@@ -214,7 +233,9 @@ export class StateManager {
 
                 ui.slot,
 
-                this.glyphMap
+                this.glyphMap,
+
+                ui.action
 
                 )
 
@@ -223,7 +244,7 @@ export class StateManager {
       }
 
       else if (ui.type === 'TextureButton') {
-        uiElements.push(
+        this.UI.push(
 
             new TextureButton(
 
@@ -239,16 +260,16 @@ export class StateManager {
 
                 ui.px, ui.py,
 
-                ui.theta
+                ui.theta, ui.action
 
                 )
 
         );
       }
     }
-
-    return uiElements;
   }
+
+
 
   SyncEngine() {
     this.Engine.sceneObjects.length = 0;
@@ -266,6 +287,33 @@ export class StateManager {
         this.Engine.AddObject(ui.RenderObject);
       }
     }
+  }
+
+  LoadInputEvents(inputs) {
+    this.InputEvents = [];
+    for (let input of inputs || []) {
+      this.InputEvents.push(input);
+    }
+  }
+
+  AddInputEvent(inputevent) {
+    this.InputEvents.push(inputevent);
+    console.log(inputevent);
+  }
+
+  ChangeState() {
+    for (let entity of this.Entities) {
+      entity.RemoveAllFixtures();
+
+      if (entity.body) this.simulationWorld.destroyBody(entity.body);
+    }
+
+    this.InputEvents = [];
+    this.UI = [];
+    this.Entities = [];
+
+    this.EntityMap.clear();
+    this.LoadfromLocal(this.gameState);
   }
 
 
@@ -289,8 +337,9 @@ export class StateManager {
 
       entities: this.SerializeScene(this.Entities),
 
-      ui: this.SerializeUI(this.UI)
+      ui: this.SerializeUI(this.UI),
 
+      input: this.SerializeInputEvents()
     };
 
     const json = JSON.stringify(gameScene, null, 2);
@@ -300,18 +349,7 @@ export class StateManager {
 
 
 
-  LoadGameData(sceneName) {
-    const json = localStorage.getItem(sceneName);
-
-    if (!json) {
-      console.warn('Scene not found:', sceneName);
-
-      return;
-    }
-
-    const data = JSON.parse(json);
-
-
+  LoadScene(data) {
     if (data.metadata?.version !== 1) {
       console.warn('Scene version mismatch');
     }
@@ -323,78 +361,214 @@ export class StateManager {
 
 
 
-    for (let entity of this.Entities) {
-      entity.RemoveAllFixtures();
-
-      this.simulationWorld.destroyBody(entity.body);
-    }
-
-
-
-    this.Entities = [];
-
     for (let e of data.entities || []) {
-      this.Entities.push(this.LoadEntity(e));
+      const entity = this.LoadEntity(e);
+      this.AddEntity(entity);
     }
 
+    this.LoadInputEvents(data.input);
+    this.LoadUI(data.ui);
 
-
-    this.UI = this.LoadUI(data.ui);
+    this.SyncEngine();
   }
 
-  SyncEngine() {
-    this.Engine.sceneObjects.length = 0;
-    this.Engine.TextObjects.length = 0;
+  async LoadfomDisk(path) {
+    const res = await fetch(path);
+    const data = await res.json();
 
-    for (let e of this.Entities) {
-      this.Engine.AddObject(e.RenderObject);
-    }
+    localStorage.setItem(data.metadata.name, JSON.stringify(data));
 
-    for (let ui of this.UI) {
-      if (ui instanceof TextButton) {
-        this.Engine.AddText(ui.RenderText);
-
-      } else if (ui instanceof TextureButton) {
-        this.Engine.AddObject(ui.RenderObject);
-      }
-    }
+    this.LoadScene(data);
   }
+
+  LoadfromLocal(sceneName) {
+    const json = localStorage.getItem(sceneName);
+
+    if (!json) return;
+
+    const data = JSON.parse(json);
+
+    stateManager.LoadScene(data);
+  }
+
+
 
   AddEvent(event) {
     this.Events.push(event);
   }
 
-  Handlevent(event) {
+  RemoveEntity(entity) {
+    const index = this.Entities.indexOf(entity);
+
+    entity.DeleteEntity();
+
+    if (index !== -1) {
+      this.Entities.splice(index, 1);
+    }
+    this.Engine.RemoveObj(entity.RenderObject);
+  }
+
+  SaveToDisk(sceneName) {
+    const scene = {
+      metadata: {name: sceneName, version: 1},
+
+      physics: this.gravity,
+      camera: this.CameraPos,
+
+      entities: this.SerializeScene(this.Entities),
+      ui: this.SerializeUI(this.UI),
+      input: this.SerializeInputEvents()
+    };
+
+    const json = JSON.stringify(scene, null, 2);
+
+    const blob = new Blob([json], {type: 'application/json'});
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = sceneName + '.json';
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+  }
+
+  HandleEvent(event) {
+    const e = event.entityID ? this.EntityMap.get(event.entityID) : null;
+
     switch (event.type) {
       case 'MOVE_ENTITY':
-        const e = this.EntityMap.get(event.entityID);
 
-        e.RenderObject.x += event.dx;
-        e.RenderObject.y += event.dy;
+        if (!e) return;
+
+        const pos = e.body.getPosition();
+
+        e.body.setTransform(
+            planck.Vec2(event.dx + pos.x, event.dy + pos.y), e.body.getAngle());
+
+        break;
+
+
+      case 'SET_ENTITY_POS':
+
+        if (!e) return;
+        e.body.setTransform(
+            this.simulationWorld.pl.Vec2(event.x, event.y), e.body.getAngle());
+
+        break;
+
+
+      case 'ROT_ENTITY':
+
+        if (!e) return;
+        e.body.setTransform(e.body.getPosition(), event.theta);
+
+
+        break;
+
+
+      case 'DESTROY_ENTITY':
+
+        if (!e) return;
+        this.RemoveEntity(e);
+
+        break;
+
+
+      case 'APPLY_FORCE':
+
+        if (!e) return;
+
+        e.body.applyForceToCenter(
+            this.Simulation.pl.Vec2(event.fx, event.fy), true);
+
+        break;
+
+
+      case 'APPLY_IMP':
+
+        if (!e) return;
+
+        e.body.applyLinearImpulse(
+            this.Simulation.pl.Vec2(event.xImp, event.yImp),
+            e.body.getWorldCenter(), true);
+
+        break;
+
+
+      case 'SET_VELOCITY':
+
+        if (!e) return;
+
+        e.body.setLinearVelocity(this.Simulation.pl.Vec2(event.vx, event.vy));
+
+        break;
+
+
+      case 'SET_CAMERA_POSITION':
+
+        this.Engine.CameraPos = [event.x, event.y, event.z];
+
+        break;
+
+
+      case 'MOVE_CAMERA':
+
+        this.Engine.CameraPos[0] += event.x;
+        this.Engine.CameraPos[1] += event.y;
+        this.Engine.CameraPos[2] += event.z;
+
         break;
 
 
       case 'CHANGE_STATE':
+
         this.gameState = event.state;
+        this.ChangeState();
         break;
 
 
       case 'LOAD_SCENE':
-        this.LoadGameData(event.scene);
-        this.SyncEngine();
+
+        this.LoadScene(event.scene);
+
+
         break;
     }
   }
 
-  update() {
+  update(mx, my, click) {
     for (let e of this.Entities) {
+      // console.log(e.ID);
       e.update();
-      console.log(e);
     }
 
-    for (let event of this.Events) {
-      this.Handlevent(event);
+    for (let ui of this.UI) {
+      ui.update(mx, my, click);
+
+      if (ui.MouseClicked) {
+        this.AddEvent(ui.action);
+      }
     }
+
+    for (let input of this.InputEvents) {
+      if (this.UISystem.isDown(input.key)) {
+        this.AddEvent(input.event);
+      }
+    }
+
+
+
+    for (let event of this.Events) {
+      this.HandleEvent(event);
+    }
+
+
+    this.Events = [];
   }
 
 

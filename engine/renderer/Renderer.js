@@ -104,9 +104,6 @@ export class Renderer {
     this.gl.uniformMatrix4fv(ProjectionMatrixLocation, false, ProjectionMatrix);
   }
 
-  AddObject(obj) {
-    this.sceneObjects.push(obj);
-  }
 
   AddIndexData() {
     let base = this.VerticesCount;
@@ -280,11 +277,6 @@ export class Renderer {
     this.TextureCount++;
   }
 
-  AddText(texts) {
-    this.TextObjects.push(texts);
-    console.log('Adding text:', texts);
-  };
-
 
 
   update() {
@@ -343,6 +335,30 @@ export class Renderer {
     this.Indices = [];
   }
 
+  AddObject(obj) {
+    this.sceneObjects.push(obj);
+  }
+
+  AddText(texts) {
+    this.TextObjects.push(texts);
+    console.log('Adding text:', texts);
+  };
+
+  RemoveObj(Obj) {
+    const index = this.sceneObjects.indexOf(Obj);
+
+    if (index !== -1) {
+      this.sceneObjects.splice(index, 1);
+    }
+  }
+
+  RemoveText(text) {
+    const index = this.TextObjects.indexOf(text);
+
+    if (index !== -1) {
+      this.TextObjects.splice(index, 1);
+    }
+  }
 
   ReturnCameraPos() {
     return this.CameraPos

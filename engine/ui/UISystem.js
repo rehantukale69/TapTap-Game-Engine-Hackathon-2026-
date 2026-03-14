@@ -84,7 +84,5 @@ export class UISystem {
     this.mouseClicked = false;
   }
 
-  update() {
-    this.endFrame();
-  }
+  update() {}
 }

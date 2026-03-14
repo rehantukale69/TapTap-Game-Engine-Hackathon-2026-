@@ -29,15 +29,14 @@ export class TextureButton {
         my <= this.y + halfH);
   }
 
-  MouseClicked(mx, my) {
-    return this.isInside(mx, my);
+
+  update(mx, my, click) {
+    this.MouseClicked = false;
+    if (this.isInside(mx, my) && click) {
+      this.MouseClicked = true;
+    }
   }
 
-  update() {
-    /*console.log(
-        'Bounds:', this.x - this.w / 2, this.x + this.w / 2,
-        this.y - this.h / 2, this.y + this.h / 2); */
-  }
 
   clear() {
     this.RenderObject.Vertxes.length = 0;
