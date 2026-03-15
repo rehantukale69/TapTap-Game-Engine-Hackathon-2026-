@@ -50,13 +50,17 @@ http://localhost:8000
 
 # Controls
 
-| Key                 | Action                               |
-| ------------------- | ------------------------------------ |
-| **A**               | Load scene from JSON file            |
-| **B**               | Save current scene to disk           |
-| **P**               | Play background music                |
-| **Mouse Click**     | Trigger UI buttons                   |
-| **Configured Keys** | Trigger input events defined in JSON |
+| Key / Input        | Action                                   |
+|--------------------|-------------------------------------------|
+| **A**              | Load scene from JSON file                 |
+| **B**              | Save current scene to disk                |
+| **P**              | Play background music                     |
+| **I**              | Move player to the **left**               |
+| **UI Button**      | Move player to the **right**              |
+| **Mouse Click**    | Trigger UI buttons                        |
+| **Configured Keys**| Trigger input events defined in JSON      |
+
+
 
 Input behavior such as movement or actions is defined through the **scene JSON input mapping system**.
 
