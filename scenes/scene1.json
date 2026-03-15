@@ -1,0 +1,146 @@
+{
+  "metadata": {
+    "name": "scene1",
+    "version": 1
+  },
+  "physics": [
+    0,
+    -10
+  ],
+  "camera": [
+    0,
+    0,
+    0
+  ],
+  "entities": [
+    {
+      "entity": {
+        "x": 0.22579731725324748,
+        "y": -21.242482572472245,
+        "z": -400,
+        "w": 50,
+        "h": 50,
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "alpha": 1,
+        "slot": 3,
+        "px": 0,
+        "py": 0,
+        "theta": -0.0002809194236643756,
+        "bodytype": "dynamic",
+        "id": "Player"
+      },
+      "fixtures": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 50,
+          "h": 50,
+          "density": 1,
+          "friction": 1,
+          "restitution": 1,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+    },
+    {
+      "entity": {
+        "x": 0,
+        "y": -100,
+        "z": -400,
+        "w": 50,
+        "h": 50,
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "alpha": 1,
+        "slot": 2,
+        "px": 0,
+        "py": 0,
+        "theta": 0,
+        "bodytype": "static",
+        "id": "Ground"
+      },
+      "fixtures": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 50,
+          "h": 50,
+          "density": 1,
+          "friction": 1,
+          "restitution": 1,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+    }
+  ],
+  "ui": [
+    {
+      "type": "TextButton",
+      "text": "Right",
+      "x": 0,
+      "y": 0,
+      "z": -400,
+      "r": 1,
+      "g": 1,
+      "b": 1,
+      "alpha": 1,
+      "scale": 0.3,
+      "slot": 0,
+      "action": {
+        "type": "MOVE_ENTITY",
+        "entityID": "Player",
+        "dx": 0.5,
+        "dy": 0
+      }
+    }
+  ],
+  "input": [
+    {
+      "key": "KeyY",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "CHANGE_STATE",
+          "state": "Menu"
+        }
+        
+      ]
+    },
+     {
+      "key": "KeyI",
+      "condition": "pressed",
+      "event": [
+        {
+        "type": "MOVE_ENTITY",
+        "entityID": "Player",
+        "dx": -0.5,
+        "dy": 0
+      }
+        
+      ]
+    },
+    {
+      "key": "KeyP",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "PLAY_AUDIO",
+          "audio": "bgm",
+          "loop": false,
+          "volume": 0.75
+        }
+      ]
+    }
+  ],
+  "audio": [
+    {
+      "id": "bgm",
+      "path": "../../Resources/music.mp3"
+    }
+  ]
+}

@@ -1,39 +1,88 @@
-
+// Import required engine components
 import {Entity} from '../entity/Entity.js';
 import {TextButton} from '../ui/TextButton.js';
 import {TextureButton} from '../ui/TextureButton.js';
 
+// Conversion factor between physics units and render units
 const SCALE = 50;
 
+/*
+=========================================================
+STATE MANAGER
+---------------------------------------------------------
+This class manages the entire game state including:
+- Entities in the scene
+- UI elements
+- Input events
+- Audio system
+- Scene serialization and loading
+- Event handling and state transitions
+=========================================================
+*/
+
 export class StateManager {
-  constructor(gravity, cameraPos, simulationWorld, glyphMap, engine, UISystem) {
+  /*
+  -------------------------------------------------------
+  Constructor
+  Initializes the state manager and stores references
+  to all major engine systems.
+  -------------------------------------------------------
+  */
+  constructor(
+      gravity, cameraPos, simulationWorld, glyphMap, engine, UISystem,
+      audiosystem) {
+    // List of all physics/render entities
     this.Entities = [];
+
+    // Map for fast lookup of entities using their ID
     this.EntityMap = new Map();
+
+    // UI elements (buttons etc.)
     this.UI = [];
 
+    // Physics gravity settings
     this.gravity = gravity;
+
+    // Camera position
     this.CameraPos = cameraPos;
 
+    // Planck physics world
     this.simulationWorld = simulationWorld;
+
+    // Input handling system
     this.UISystem = UISystem;
+
+    // Font glyph atlas used for text rendering
     this.glyphMap = glyphMap;
+
+    // Rendering engine
     this.Engine = engine;
 
+    // Audio system
+    this.audio = audiosystem;
+
+    // Event queue
     this.Events = [];
 
+    // Input event bindings
     this.InputEvents = [];
+
+    // Current scene/state name
     this.gameState = 'Test';
   }
 
-  /* =========================
+  /* =====================================================
         ENTITY SERIALIZATION
-     ========================= */
+     Converts entities into JSON format so they can be
+     saved or exported as scene data
+     ===================================================== */
 
   SerializeEntity(entity) {
     const obj = entity.RenderObject;
 
     const entityData = {
 
+      // Rendering and transform information
       entity: {
         x: obj.x,
         y: obj.y,
@@ -57,15 +106,18 @@ export class StateManager {
         id: entity.ID
       },
 
+      // Physics fixtures
       fixtures: []
-
     };
 
+    // Save all physics fixtures
     for (let fix of entity.fixtures) {
       entityData.fixtures.push({
 
         x: fix.x,
         y: fix.y,
+
+        // Convert physics units to render units
         w: fix.w * (SCALE * 2),
         h: fix.h * (SCALE * 2),
 
@@ -75,14 +127,17 @@ export class StateManager {
 
         issensor: fix.issensor,
         theta: fix.theta
-
       });
     }
 
     return entityData;
   }
 
-
+  /*
+  -------------------------------------------------------
+  Serializes all entities in the scene
+  -------------------------------------------------------
+  */
   SerializeScene(entities) {
     const sceneData = [];
 
@@ -94,7 +149,11 @@ export class StateManager {
   }
 
 
-
+  /*
+  -------------------------------------------------------
+  Creates a new Entity from saved scene data
+  -------------------------------------------------------
+  */
   LoadEntity(data) {
     const e = data.entity;
 
@@ -108,10 +167,9 @@ export class StateManager {
 
         e.px, e.py, e.theta,
 
-        this.simulationWorld, e.bodytype, e.id
+        this.simulationWorld, e.bodytype, e.id);
 
-    );
-
+    // Restore physics fixtures
     for (let f of data.fixtures || []) {
       entity.AddFixture(
 
@@ -119,16 +177,42 @@ export class StateManager {
 
           f.density, f.friction, f.restitution,
 
-          f.issensor, f.theta
-
-      );
+          f.issensor, f.theta);
     }
 
     return entity;
   }
 
+  /*
+  -------------------------------------------------------
+  Serializes button action events
+  (used for UI interactions)
+  -------------------------------------------------------
+  */
+  SerializeButtonAction(action) {
+    if (!action || !Array.isArray(action.event)) return null;
 
+    return {
+      event: action.event.map(
+          e => ({
+            ...e,
 
+            // Convert loop string to boolean
+            loop: e.loop === 'true' ? true :
+                e.loop === 'false'  ? false :
+                                      e.loop,
+
+            // Ensure volume is numeric
+            volume: e.volume !== undefined ? Number(e.volume) : e.volume
+          }))
+    };
+  }
+
+  /*
+  -------------------------------------------------------
+  Serializes a TextButton UI element
+  -------------------------------------------------------
+  */
   SerializeTextButton(button) {
     return {
 
@@ -149,12 +233,16 @@ export class StateManager {
       scale: button.scale,
 
       slot: button.slot,
-      action: button.action || null
 
+      action: this.SerializeButtonAction(button.action)
     };
   }
 
-
+  /*
+  -------------------------------------------------------
+  Serializes a TextureButton UI element
+  -------------------------------------------------------
+  */
   SerializeTextureButton(button) {
     return {
 
@@ -179,17 +267,55 @@ export class StateManager {
       py: button.RenderObject.py,
 
       theta: button.RenderObject.theta,
-      action: button.action || null
 
+      action: this.SerializeButtonAction(button.action)
     };
   }
 
-  SerializeInput(input) {
-    return {key: input.key, event: input.event || null};
+  /*
+  -------------------------------------------------------
+  Loads audio files defined in scene data
+  -------------------------------------------------------
+  */
+  LoadAudio(data) {
+    for (let file of data) {
+      this.audio.loadSound(file.id, file.path);
+    }
   }
 
+  /*
+  -------------------------------------------------------
+  Serializes keyboard input event mapping
+  -------------------------------------------------------
+  */
+  SerializeInput(input) {
+    return {
+
+      key: input.key,
+
+      condition: input.condition,
+
+      event: input.event.map(
+          e => ({
+            ...e,
+
+            loop: e.loop === 'true' ? true :
+                e.loop === 'false'  ? false :
+                                      e.loop,
+
+            volume: e.volume !== undefined ? Number(e.volume) : e.volume
+          }))
+    };
+  }
+
+  /*
+  -------------------------------------------------------
+  Serializes all input bindings
+  -------------------------------------------------------
+  */
   SerializeInputEvents() {
     const data = [];
+
     for (let input of this.InputEvents) {
       data.push(this.SerializeInput(input));
     }
@@ -197,7 +323,11 @@ export class StateManager {
     return data;
   }
 
-
+  /*
+  -------------------------------------------------------
+  Serializes all UI elements
+  -------------------------------------------------------
+  */
   SerializeUI(uiElements) {
     const data = [];
 
@@ -214,63 +344,61 @@ export class StateManager {
     return data;
   }
 
-
-
+  /*
+  -------------------------------------------------------
+  Loads UI elements from scene data
+  -------------------------------------------------------
+  */
   LoadUI(data) {
-    for (let ui of data || []) {
+    for (let ui of (data || [])) {
+      const action =
+          ui.action && Array.isArray(ui.action.event) ? ui.action : null;
+
       if (ui.type === 'TextButton') {
-        this.UI.push(
+        this.UI.push(new TextButton(
 
-            new TextButton(
+            ui.text, ui.x, ui.y, ui.z,
 
-                ui.text, ui.x, ui.y, ui.z,
+            ui.r, ui.g, ui.b,
 
-                ui.r, ui.g, ui.b,
+            ui.alpha,
 
-                ui.alpha,
+            ui.scale,
 
-                ui.scale,
+            ui.slot,
 
-                ui.slot,
+            this.glyphMap,
 
-                this.glyphMap,
-
-                ui.action
-
-                )
-
-        );
-
+            action));
       }
 
       else if (ui.type === 'TextureButton') {
-        this.UI.push(
+        this.UI.push(new TextureButton(
 
-            new TextureButton(
+            ui.x, ui.y, ui.z,
 
-                ui.x, ui.y, ui.z,
+            ui.w, ui.h,
 
-                ui.w, ui.h,
+            ui.r, ui.g, ui.b,
 
-                ui.r, ui.g, ui.b,
+            ui.alpha,
 
-                ui.alpha,
+            ui.slot,
 
-                ui.slot,
+            ui.px, ui.py,
 
-                ui.px, ui.py,
+            ui.theta,
 
-                ui.theta, ui.action
-
-                )
-
-        );
+            action));
       }
     }
   }
 
-
-
+  /*
+  -------------------------------------------------------
+  Synchronizes loaded entities and UI with the renderer
+  -------------------------------------------------------
+  */
   SyncEngine() {
     this.Engine.sceneObjects.length = 0;
     this.Engine.TextObjects.length = 0;
@@ -289,18 +417,34 @@ export class StateManager {
     }
   }
 
+  /*
+  -------------------------------------------------------
+  Loads input bindings
+  -------------------------------------------------------
+  */
   LoadInputEvents(inputs) {
-    this.InputEvents = [];
-    for (let input of inputs || []) {
-      this.InputEvents.push(input);
+    if (!Array.isArray(inputs)) {
+      this.InputEvents = [];
+      return;
     }
+
+    this.InputEvents = inputs;
   }
 
+  /*
+  Adds a new input binding
+  */
   AddInputEvent(inputevent) {
     this.InputEvents.push(inputevent);
+
     console.log(inputevent);
   }
 
+  /*
+  -------------------------------------------------------
+  Changes the current game state/scene
+  -------------------------------------------------------
+  */
   ChangeState() {
     for (let entity of this.Entities) {
       entity.RemoveAllFixtures();
@@ -308,16 +452,33 @@ export class StateManager {
       if (entity.body) this.simulationWorld.destroyBody(entity.body);
     }
 
-    this.InputEvents = [];
-    this.UI = [];
-    this.Entities = [];
+    this.reset();
 
     this.EntityMap.clear();
+
     this.LoadfromLocal(this.gameState);
   }
 
+  /*
+  -------------------------------------------------------
+  Serializes audio files
+  -------------------------------------------------------
+  */
+  SerializeAudio() {
+    const data = [];
 
+    for (let name in this.audio.soundspath) {
+      data.push({id: name, path: this.audio.soundspath[name]});
+    }
 
+    return data;
+  }
+
+  /*
+  -------------------------------------------------------
+  Saves entire game scene into local storage
+  -------------------------------------------------------
+  */
   SaveGameData(sceneName) {
     const gameScene = {
 
@@ -328,7 +489,6 @@ export class StateManager {
         version: 1,
 
         engine: 'TapTap'
-
       },
 
       physics: this.gravity,
@@ -339,7 +499,9 @@ export class StateManager {
 
       ui: this.SerializeUI(this.UI),
 
-      input: this.SerializeInputEvents()
+      input: this.SerializeInputEvents(),
+
+      audio: this.SerializeAudio()
     };
 
     const json = JSON.stringify(gameScene, null, 2);
@@ -347,33 +509,45 @@ export class StateManager {
     localStorage.setItem(sceneName, json);
   }
 
-
-
+  /*
+  -------------------------------------------------------
+  Loads a scene from JSON data
+  -------------------------------------------------------
+  */
   LoadScene(data) {
     if (data.metadata?.version !== 1) {
       console.warn('Scene version mismatch');
     }
 
-
     this.gravity = data.physics;
 
     this.CameraPos = data.camera;
 
-
-
     for (let e of data.entities || []) {
       const entity = this.LoadEntity(e);
+
       this.AddEntity(entity);
     }
 
     this.LoadInputEvents(data.input);
+
     this.LoadUI(data.ui);
+
+    this.LoadAudio(data.audio);
 
     this.SyncEngine();
   }
 
+  /*
+  -------------------------------------------------------
+  Loads scene JSON from disk using fetch
+  -------------------------------------------------------
+  */
   async LoadfomDisk(path) {
+    path = path + '.json';
+
     const res = await fetch(path);
+
     const data = await res.json();
 
     localStorage.setItem(data.metadata.name, JSON.stringify(data));
@@ -381,6 +555,9 @@ export class StateManager {
     this.LoadScene(data);
   }
 
+  /*
+  Loads scene stored in browser localStorage
+  */
   LoadfromLocal(sceneName) {
     const json = localStorage.getItem(sceneName);
 
@@ -391,12 +568,16 @@ export class StateManager {
     stateManager.LoadScene(data);
   }
 
-
-
+  /*
+  Adds a new event to the event queue
+  */
   AddEvent(event) {
     this.Events.push(event);
   }
 
+  /*
+  Removes an entity from the scene
+  */
   RemoveEntity(entity) {
     const index = this.Entities.indexOf(entity);
 
@@ -405,9 +586,15 @@ export class StateManager {
     if (index !== -1) {
       this.Entities.splice(index, 1);
     }
+
     this.Engine.RemoveObj(entity.RenderObject);
   }
 
+  /*
+  -------------------------------------------------------
+  Exports scene to JSON file for download
+  -------------------------------------------------------
+  */
   SaveToDisk(sceneName) {
     const scene = {
       metadata: {name: sceneName, version: 1},
@@ -417,7 +604,8 @@ export class StateManager {
 
       entities: this.SerializeScene(this.Entities),
       ui: this.SerializeUI(this.UI),
-      input: this.SerializeInputEvents()
+      input: this.SerializeInputEvents(),
+      audio: this.SerializeAudio()
     };
 
     const json = JSON.stringify(scene, null, 2);
@@ -437,6 +625,12 @@ export class StateManager {
     URL.revokeObjectURL(url);
   }
 
+  /*
+  -------------------------------------------------------
+  Handles all gameplay events
+  (physics, camera, state changes, audio etc.)
+  -------------------------------------------------------
+  */
   HandleEvent(event) {
     const e = event.entityID ? this.EntityMap.get(event.entityID) : null;
 
@@ -452,32 +646,30 @@ export class StateManager {
 
         break;
 
-
       case 'SET_ENTITY_POS':
 
         if (!e) return;
+
         e.body.setTransform(
             this.simulationWorld.pl.Vec2(event.x, event.y), e.body.getAngle());
 
         break;
 
-
       case 'ROT_ENTITY':
 
         if (!e) return;
+
         e.body.setTransform(e.body.getPosition(), event.theta);
 
-
         break;
-
 
       case 'DESTROY_ENTITY':
 
         if (!e) return;
+
         this.RemoveEntity(e);
 
         break;
-
 
       case 'APPLY_FORCE':
 
@@ -487,7 +679,6 @@ export class StateManager {
             this.Simulation.pl.Vec2(event.fx, event.fy), true);
 
         break;
-
 
       case 'APPLY_IMP':
 
@@ -499,7 +690,6 @@ export class StateManager {
 
         break;
 
-
       case 'SET_VELOCITY':
 
         if (!e) return;
@@ -508,13 +698,11 @@ export class StateManager {
 
         break;
 
-
       case 'SET_CAMERA_POSITION':
 
         this.Engine.CameraPos = [event.x, event.y, event.z];
 
         break;
-
 
       case 'MOVE_CAMERA':
 
@@ -524,60 +712,111 @@ export class StateManager {
 
         break;
 
-
       case 'CHANGE_STATE':
 
         this.gameState = event.state;
-        this.ChangeState();
-        break;
 
+        this.ChangeState();
+
+        break;
 
       case 'LOAD_SCENE':
 
         this.LoadScene(event.scene);
 
+        break;
+
+      case 'PLAY_AUDIO':
+
+        this.audio.playSound(event.audio, event.loop, event.volume);
 
         break;
     }
   }
 
+  /*
+  -------------------------------------------------------
+  Main update loop for the StateManager
+  Handles entities, UI and input events
+  -------------------------------------------------------
+  */
   update(mx, my, click) {
+    // Update entities
     for (let e of this.Entities) {
-      // console.log(e.ID);
       e.update();
     }
 
+    // Update UI elements
     for (let ui of this.UI) {
       ui.update(mx, my, click);
 
-      if (ui.MouseClicked) {
-        this.AddEvent(ui.action);
+      // If button clicked trigger its events
+      if (ui.MouseClicked && ui.action && Array.isArray(ui.action.event)) {
+        for (let e of ui.action.event) {
+          this.AddEvent(e);
+        }
       }
     }
 
-    for (let input of this.InputEvents) {
-      if (this.UISystem.isDown(input.key)) {
-        this.AddEvent(input.event);
+    // Process input bindings
+    for (let input of (this.InputEvents || null)) {
+      let triggered = false;
+
+      if (input.condition === 'pressed' && this.UISystem.isPressed(input.key))
+        triggered = true;
+
+      if (input.condition === 'hold' && this.UISystem.isDown(input.key))
+        triggered = true;
+
+      if (input.condition === 'released' && this.UISystem.isReleased(input.key))
+        triggered = true;
+
+      if (triggered) {
+        for (let e of input.event) {
+          this.AddEvent(e);
+        }
       }
     }
 
-
-
+    // Execute queued events
     for (let event of this.Events) {
       this.HandleEvent(event);
     }
 
-
+    // Clear event queue
     this.Events = [];
   }
 
+  /*
+  Resets scene data completely
+  */
+  reset() {
+    for (let entity of this.Entities) {
+      entity.RemoveAllFixtures();
 
+      if (entity.body) this.simulationWorld.destroyBody(entity.body);
+    }
 
+    this.Entities = [];
+    this.UI = [];
+    this.InputEvents = [];
+
+    this.audio.sounds = {};
+    this.audio.soundspath = {};
+  }
+
+  /*
+  Adds entity to the scene and map
+  */
   AddEntity(entity) {
     this.Entities.push(entity);
+
     this.EntityMap.set(entity.ID, entity);
   }
 
+  /*
+  Adds UI element
+  */
   AddUI(UI) {
     this.UI.push(UI);
   }

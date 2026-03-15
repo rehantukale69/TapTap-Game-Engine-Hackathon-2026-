@@ -289,13 +289,9 @@ export class Renderer {
     for (let obj of this.sceneObjects) {
       obj.update();
       this.AddVertexData(obj.Vertexes);
-      // console.log(obj);
     }
 
     for (let text of this.TextObjects) {
-      // console.log(text);
-
-      // if (!text.update) continue;
       text.update();
       this.AddVertexData(text.Vertexes);
       text.clear();

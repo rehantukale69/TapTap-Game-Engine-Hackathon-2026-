@@ -1,7 +1,7 @@
 import * as glMatrix from 'https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/esm/index.js';
 
+import {AudioSystem} from '../audio/AudioSystem.js';
 import {Entity} from '../entity/Entity.js';
-import {GameLoader} from '../loader/GameLoader.js';
 import {Object} from '../renderer/Object.js';
 import {Renderer} from '../renderer/Renderer.js';
 import {Text} from '../renderer/Text.js';
@@ -28,21 +28,28 @@ export class Manager {
 
     this.Engine.InitializeTextures();
     this.Engine.InitializeFont();
+
     this.Engine.LoadTexture('../../Resources/1.png', 1);
     this.Engine.LoadTexture('../../Resources/2.png', 2);
+    this.Engine.LoadTexture('../../Resources/3.png', 3);
 
 
-    this.Shot = new TextButton(
-        'Kya Bolti Public', 0, 0, -400, 1.0, 1.0, 1.0, 1.0, 0.3, 0,
-        this.Engine.glyphMap,
-        {type: 'MOVE_ENTITY', entityID: 'Player', dx: 0.05, dy: 0});
+
+    /* this.Shot = new TextButton(
+         'Kya Bolti Public', 0, 0, -400, 1.0, 1.0, 1.0, 1.0, 0.3, 0,
+         this.Engine.glyphMap, {
+           event: [
+             {type: 'MOVE_ENTITY', entityID: 'Player', dx: 0.05, dy: 0},
+             {type: 'PLAY_AUDIO', audio: 'bgm', loop: 'false', volume: '0.75'}
+           ]
+         });
 
 
-    this.Engine.AddText(this.Shot.RenderText);
+     this.Engine.AddText(this.Shot.RenderText);
 
-    this.d = new TextureButton(
-        0, 0, -400, 200, 200, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0);
-    // this.Engine.AddObject(this.d.RenderObject);
+     this.d = new TextureButton(
+         0, 0, -400, 200, 200, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0);
+     // this.Engine.AddObject(this.d.RenderObject); */
   };
 
   InitializeUISystem() {
@@ -53,7 +60,7 @@ export class Manager {
     this.World = this.Simulation.ReturnWorld();
 
 
-    this.Entity1 = new Entity(
+    /*this.Entity1 = new Entity(
         0, 0, -400, 50, 50, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0, this.Simulation,
         'dynamic', 'Player');
     console.log(this.Entity1.AddFixture(0, 0, 50, 50, 1, 1, 1, false, 0.0));
@@ -63,22 +70,20 @@ export class Manager {
         0, -100, -400, 50, 50, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0,
         this.Simulation, 'static', 'Ground');
     console.log(this.Entity2.AddFixture(0, 0, 50, 50, 1, 1, 1, false, 0.0));
-    this.Engine.AddObject(this.Entity2.RenderObject);
+    this.Engine.AddObject(this.Entity2.RenderObject); */
   };
+
+  InitializeSoundSystem() {
+    this.audio = new AudioSystem();
+  }
 
   InitializeStateManager() {
     this.StateManager = new StateManager(
         this.gravity, this.Engine.ReturnCameraPos(), this.Simulation,
-        this.Engine.glyphMap, this.Engine, this.UI);
+        this.Engine.glyphMap, this.Engine, this.UI, this.audio);
 
 
 
-    this.StateManager.AddEntity(this.Entity1);
-    this.StateManager.AddEntity(this.Entity2);
-    this.StateManager.AddUI(this.Shot);
-    this.StateManager.AddInputEvent(
-        {key: 'KeyY', event: {type: 'CHANGE_STATE', state: 'Menu'}});
-    // this.StateManager.AddUI(this.d);
     this.StateManager.SyncEngine();
   }
   update() {};
@@ -89,39 +94,25 @@ export class Manager {
     let pos = this.UI.getMousePos();
 
 
-    /*if (this.d.isInside(pos.x, pos.y) && this.UI.mouseClicked) {
-      console.log('CHod diya');
-    } */
 
     this.Simulation.step(this.fixedDT);
 
-    if (this.UI.isDown('KeyA')) {
-      this.StateManager.LoadfomDisk('scene1');
+    if (this.UI.isPressed('KeyA')) {
+      this.StateManager.reset();
+      this.StateManager.LoadfomDisk('../../scenes/scene1');
       this.StateManager.SyncEngine();
-
-      // console.log(this.StateManager.Entities);
     }
 
-    if (this.UI.isDown('KeyB')) {
+    if (this.UI.isPressed('KeyB')) {
       this.StateManager.SaveToDisk('scene1');
-
-      // console.log(this.StateManager.Entities);
-    }
-
-    if (this.UI.isDown('KeyC')) {
-      // console.log(this.StateManager.Entities);
     }
 
 
 
-    // this.Entity1.update();
-    // this.Entity2.update();
-
-    this.StateManager.update(pos.x, pos.y, this.UI.mouseClicked);
+    this.StateManager.update(pos.x, pos.y, this.UI.mousePressed);
     this.UI.endFrame();
 
-    // console.log(this.Entity1);
-    // console.log(this.Entity2);
+
 
     this.Engine.Render();
     requestAnimationFrame(this.Render);
