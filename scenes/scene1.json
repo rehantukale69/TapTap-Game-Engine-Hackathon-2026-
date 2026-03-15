@@ -15,8 +15,8 @@
   "entities": [
     {
       "entity": {
-        "x": 0.22579731725324748,
-        "y": -21.242482572472245,
+        "x": 0.29682746942838567,
+        "y": -26.11228550994745,
         "z": -400,
         "w": 50,
         "h": 50,
@@ -27,7 +27,7 @@
         "slot": 3,
         "px": 0,
         "py": 0,
-        "theta": -0.0002809194236643756,
+        "theta": -0.0002787782005695163,
         "bodytype": "dynamic",
         "id": "Player"
       },
@@ -92,10 +92,14 @@
       "scale": 0.3,
       "slot": 0,
       "action": {
-        "type": "MOVE_ENTITY",
-        "entityID": "Player",
-        "dx": 0.5,
-        "dy": 0
+        "event": [
+          {
+            "type": "MOVE_ENTITY",
+            "entityID": "Player",
+            "dx": 0.5,
+            "dy": 0
+          }
+        ]
       }
     }
   ],
@@ -108,20 +112,38 @@
           "type": "CHANGE_STATE",
           "state": "Menu"
         }
-        
       ]
     },
-     {
+    {
+      "key": "KeyA",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/scene1"
+        }
+      ]
+    },
+    {
+      "key": "KeyB",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "SAVE_SCENE",
+          "scene": "scene1"
+        }
+      ]
+    },
+    {
       "key": "KeyI",
       "condition": "pressed",
       "event": [
         {
-        "type": "MOVE_ENTITY",
-        "entityID": "Player",
-        "dx": -0.5,
-        "dy": 0
-      }
-        
+          "type": "MOVE_ENTITY",
+          "entityID": "Player",
+          "dx": -0.5,
+          "dy": 0
+        }
       ]
     },
     {

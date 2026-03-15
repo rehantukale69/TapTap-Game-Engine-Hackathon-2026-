@@ -82,8 +82,6 @@ export class Manager {
         this.gravity, this.Engine.ReturnCameraPos(), this.Simulation,
         this.Engine.glyphMap, this.Engine, this.UI, this.audio);
 
-
-
     this.StateManager.SyncEngine();
   }
   update() {};
@@ -103,13 +101,14 @@ export class Manager {
       this.StateManager.SyncEngine();
     }
 
-    if (this.UI.isPressed('KeyB')) {
+    /*if (this.UI.isPressed('KeyB')) {
       this.StateManager.SaveToDisk('scene1');
-    }
+    } */
 
 
 
     this.StateManager.update(pos.x, pos.y, this.UI.mousePressed);
+
     this.UI.endFrame();
 
 

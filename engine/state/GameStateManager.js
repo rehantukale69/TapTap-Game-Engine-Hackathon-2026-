@@ -351,8 +351,7 @@ export class StateManager {
   */
   LoadUI(data) {
     for (let ui of (data || [])) {
-      const action =
-          ui.action && Array.isArray(ui.action.event) ? ui.action : null;
+      const action = ui.action ?? null;
 
       if (ui.type === 'TextButton') {
         this.UI.push(new TextButton(
@@ -518,6 +517,8 @@ export class StateManager {
     if (data.metadata?.version !== 1) {
       console.warn('Scene version mismatch');
     }
+
+    console.log(data);
 
     this.gravity = data.physics;
 
@@ -722,7 +723,15 @@ export class StateManager {
 
       case 'LOAD_SCENE':
 
-        this.LoadScene(event.scene);
+        this.reset();
+        this.LoadfomDisk(event.scene);
+        this.SyncEngine();
+
+        break;
+
+      case 'SAVE_SCENE':
+
+        this.SaveToDisk(event.scene);
 
         break;
 
@@ -754,7 +763,7 @@ export class StateManager {
       if (ui.MouseClicked && ui.action && Array.isArray(ui.action.event)) {
         for (let e of ui.action.event) {
           this.AddEvent(e);
-        }
+        };
       }
     }
 
