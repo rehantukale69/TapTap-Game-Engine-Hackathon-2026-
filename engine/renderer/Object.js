@@ -124,7 +124,7 @@ export class Object {
       // Top-left vertex
       new Vertex(
           this.x, this.y, this.z, this.r, this.g, this.b, this.alpha, this.slot,
-          0.0, 1.0, -this.w / 2, this.h / 2, this.px, this.y, this.theta),
+          0.0, 1.0, -this.w / 2, this.h / 2, this.px, this.py, this.theta),
     ];
   }
 }

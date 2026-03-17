@@ -97,8 +97,8 @@ export class StateManager {
         x: obj.x,
         y: obj.y,
         z: obj.z,
-        w: obj.w,
-        h: obj.h,
+
+        scale: entity.scale,
 
         r: obj.r,
         g: obj.g,
@@ -186,11 +186,12 @@ export class StateManager {
       maskMap[mask.mask] = mask.event || [];
     }
 
-    console.log(e.maskbits);
+    // console.log(this.Engine.TextureSizes);
+    console.log(Array.from(this.Engine.TextureSizes));
 
     const entity = new Entity(
 
-        e.x, e.y, e.z, e.w, e.h,
+        e.x, e.y, e.z, e.scale,
 
         e.r, e.g, e.b, e.alpha,
 
@@ -198,7 +199,8 @@ export class StateManager {
 
         e.px, e.py, e.theta,
 
-        this.simulationWorld, e.bodytype, e.id, e.categorybits, maskMap);
+        this.simulationWorld, e.bodytype, e.id, e.categorybits, maskMap,
+        this.Engine.TextureSizes[e.slot]);
 
     // Restore physics fixtures
     for (let f of data.fixtures || []) {
@@ -316,12 +318,15 @@ export class StateManager {
     }
   }
 
-  LoadTextures(data) {
-    for (let file of data) {
-      this.Engine.LoadTexture(file.id, file.path, file.depth);
-    }
-  }
+  async LoadTextures(data) {
+    const promises = [];
 
+    for (let file of data) {
+      promises.push(this.Engine.LoadTexture(file.id, file.path, file.depth));
+    }
+
+    await Promise.all(promises);  // ✅ wait for all textures
+  }
 
   /*
   -------------------------------------------------------
@@ -580,7 +585,7 @@ export class StateManager {
   Loads a scene from JSON data
   -------------------------------------------------------
   */
-  LoadScene(data) {
+  async LoadScene(data) {
     if (data.metadata?.version !== 1) {
       console.warn('Scene version mismatch');
     }
@@ -591,7 +596,7 @@ export class StateManager {
 
     this.CameraPos = data.camera;
 
-    this.LoadTextures(data.textures);
+    await this.LoadTextures(data.textures);
 
     for (let e of data.entities || []) {
       const entity = this.LoadEntity(e);
@@ -616,12 +621,9 @@ export class StateManager {
     path = path + '.json';
 
     const res = await fetch(path);
-
     const data = await res.json();
 
-    localStorage.setItem(data.metadata.name, JSON.stringify(data));
-
-    this.LoadScene(data);
+    await this.LoadScene(data);  // ✅ IMPORTANT
   }
 
   /*

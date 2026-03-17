@@ -39,13 +39,15 @@ export class Entity {
   -------------------------------------------------------
   */
   constructor(
-      x, y, z, w, h, r, g, b, alpha, slot, px, py, theta, simulationWorld,
-      bodytype, ID, categoryBits, maskmap) {
+      x, y, z, scale, r, g, b, alpha, slot, px, py, theta, simulationWorld,
+      bodytype, ID, categoryBits, maskmap, texturesize) {
     // Position and size
     this.x = x;
     this.y = y;
-    this.w = w;
-    this.h = h;
+    this.w = texturesize.w * scale;
+    this.h = texturesize.h * scale;
+
+    this.scale = scale;
 
     // Reference to physics simulation world
     this.World = simulationWorld;
@@ -59,8 +61,8 @@ export class Entity {
     -----------------------------------------------------
     Represents the visual appearance of the entity.
     */
-    this.RenderObject =
-        new Object(x, y, z, w, h, r, g, b, alpha, slot, px, py, theta);
+    this.RenderObject = new Object(
+        x, y, z, this.w, this.h, r, g, b, alpha, slot, px, py, theta);
 
     /*
     -----------------------------------------------------
@@ -92,6 +94,7 @@ export class Entity {
     this.CategoryBits = categoryBits;
     this.MasksMap = maskmap || {};
 
+    this.TextureSize = texturesize;
 
 
     this.body.setUserData(this);

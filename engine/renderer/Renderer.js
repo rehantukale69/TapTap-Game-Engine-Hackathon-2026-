@@ -256,38 +256,42 @@ export class Renderer {
   }
 
   LoadTexture(name, Path, depth) {
-    if (depth == null) depth = this.TextureCount;
+    return new Promise((resolve) => {
+      if (depth == null) depth = this.TextureCount;
 
-    this.TextureMap[name] = depth;
-    this.TexturePaths[name] = Path;
+      this.TextureMap[name] = depth;
+      this.TexturePaths[name] = Path;
 
-    this.TextureReverse.set(depth, name);
+      this.TextureReverse.set(depth, name);
 
-    if (depth >= NumberofTextures) {
-      console.error('Texture array full!');
-      return;
-    }
-
-    const img = new Image();
-    img.src = Path;
-
-    img.onload = () => {
-      this.TextureSizes[name] = {w: img.width, h: img.height};
-
-      this.gl.activeTexture(this.gl.TEXTURE0);
-      this.gl.bindTexture(this.gl.TEXTURE_2D_ARRAY, this.Textures);
-
-      if (img.width > 1960 || img.height > 1960) {
-        img.width = 1960;
-        img.height = 1960;
+      if (depth >= NumberofTextures) {
+        console.error('Texture array full!');
+        return;
       }
 
-      this.gl.texSubImage3D(
-          this.gl.TEXTURE_2D_ARRAY, 0, 0, 0, depth, img.width, img.height, 1,
-          this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
-    };
+      const img = new Image();
+      img.src = Path;
 
-    this.TextureCount++;
+      img.onload = () => {
+        this.TextureSizes[name] = {w: img.width, h: img.height};
+
+        this.gl.activeTexture(this.gl.TEXTURE0);
+        this.gl.bindTexture(this.gl.TEXTURE_2D_ARRAY, this.Textures);
+
+        if (img.width > 1960 || img.height > 1960) {
+          img.width = 1960;
+          img.height = 1960;
+        }
+
+        this.gl.texSubImage3D(
+            this.gl.TEXTURE_2D_ARRAY, 0, 0, 0, depth, img.width, img.height, 1,
+            this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
+
+        resolve();
+      };
+
+      this.TextureCount++;
+    });
   }
 
 
@@ -358,6 +362,7 @@ export class Renderer {
     this.TextureMap = {};
     this.TexturePaths = {};
     this.TextureReverse = new Map();
+    this.TextureSizes = {};
   }
 
   RemoveObj(Obj) {
