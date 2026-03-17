@@ -29,27 +29,27 @@ export class Manager {
     this.Engine.InitializeTextures();
     this.Engine.InitializeFont();
 
-    this.Engine.LoadTexture('../../Resources/1.png', 1);
-    this.Engine.LoadTexture('../../Resources/2.png', 2);
-    this.Engine.LoadTexture('../../Resources/3.png', 3);
+    /* this.Engine.LoadTexture('../../Resources/1.png', 1);
+     this.Engine.LoadTexture('../../Resources/2.png', 2);
+     this.Engine.LoadTexture('../../Resources/3.png', 3);
 
 
 
-    /* this.Shot = new TextButton(
-         'Kya Bolti Public', 0, 0, -400, 1.0, 1.0, 1.0, 1.0, 0.3, 0,
-         this.Engine.glyphMap, {
-           event: [
-             {type: 'MOVE_ENTITY', entityID: 'Player', dx: 0.05, dy: 0},
-             {type: 'PLAY_AUDIO', audio: 'bgm', loop: 'false', volume: '0.75'}
-           ]
-         });
+     /* this.Shot = new TextButton(
+          'Kya Bolti Public', 0, 0, -400, 1.0, 1.0, 1.0, 1.0, 0.3, 0,
+          this.Engine.glyphMap, {
+            event: [
+              {type: 'MOVE_ENTITY', entityID: 'Player', dx: 0.05, dy: 0},
+              {type: 'PLAY_AUDIO', audio: 'bgm', loop: 'false', volume: '0.75'}
+            ]
+          });
 
 
-     this.Engine.AddText(this.Shot.RenderText);
+      this.Engine.AddText(this.Shot.RenderText);
 
-     this.d = new TextureButton(
-         0, 0, -400, 200, 200, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0);
-     // this.Engine.AddObject(this.d.RenderObject); */
+      this.d = new TextureButton(
+          0, 0, -400, 200, 200, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0);
+      // this.Engine.AddObject(this.d.RenderObject); */
   };
 
   InitializeUISystem() {

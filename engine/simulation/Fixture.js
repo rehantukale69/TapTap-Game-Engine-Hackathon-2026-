@@ -32,7 +32,8 @@ export class Fixture {
   -------------------------------------------------------
   */
   constructor(
-      ID, body, x, y, w, h, density, friction, restitution, issensor, theta) {
+      ID, body, x, y, w, h, density, friction, restitution, issensor, theta,
+      categoryBits, maskBits) {
     // Unique fixture ID
     this.ID = ID;
 
@@ -58,6 +59,9 @@ export class Fixture {
     // Physics body to which the fixture is attached
     this.body = body;
 
+    this.CategoryBits = categoryBits;
+    this.MaskBits = maskBits;
+
     /* --------------------------------------------------
        Create Planck.js collision shape
     -------------------------------------------------- */
@@ -73,7 +77,9 @@ export class Fixture {
       density: this.density,
       friction: this.friction,
       restitution: this.restitution,
-      isSensor: this.issensor
+      isSensor: this.issensor,
+      filterCategoryBits: this.CategoryBits,
+      filterMaskBits: this.MaskBits
     });
   }
 

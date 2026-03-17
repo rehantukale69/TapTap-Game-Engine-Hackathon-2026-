@@ -40,6 +40,12 @@ export class Renderer {
     this.sceneObjects = [];
     this.TextObjects = [];
 
+    this.TextureMap = {};
+    this.TexturePaths = {};
+    this.TextureSizes = {};
+    this.TextureReverse = new Map();
+
+
     this.CameraPos = [0, 0, 0];
   }
 
@@ -249,8 +255,13 @@ export class Renderer {
     this.gl.uniform1i(TextureLoc, 0);
   }
 
-  LoadTexture(Path, depth) {
+  LoadTexture(name, Path, depth) {
     if (depth == null) depth = this.TextureCount;
+
+    this.TextureMap[name] = depth;
+    this.TexturePaths[name] = Path;
+
+    this.TextureReverse.set(depth, name);
 
     if (depth >= NumberofTextures) {
       console.error('Texture array full!');
@@ -261,6 +272,8 @@ export class Renderer {
     img.src = Path;
 
     img.onload = () => {
+      this.TextureSizes[name] = {w: img.width, h: img.height};
+
       this.gl.activeTexture(this.gl.TEXTURE0);
       this.gl.bindTexture(this.gl.TEXTURE_2D_ARRAY, this.Textures);
 
@@ -339,6 +352,13 @@ export class Renderer {
     this.TextObjects.push(texts);
     console.log('Adding text:', texts);
   };
+
+  reset() {
+    this.TextureCount = 0;
+    this.TextureMap = {};
+    this.TexturePaths = {};
+    this.TextureReverse = new Map();
+  }
 
   RemoveObj(Obj) {
     const index = this.sceneObjects.indexOf(Obj);

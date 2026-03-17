@@ -40,7 +40,7 @@ export class Entity {
   */
   constructor(
       x, y, z, w, h, r, g, b, alpha, slot, px, py, theta, simulationWorld,
-      bodytype, ID) {
+      bodytype, ID, categoryBits, maskmap) {
     // Position and size
     this.x = x;
     this.y = y;
@@ -88,6 +88,13 @@ export class Entity {
 
     // Used in editor mode when manually moving entities
     this.Selected = false;
+
+    this.CategoryBits = categoryBits;
+    this.MasksMap = maskmap || {};
+
+
+
+    this.body.setUserData(this);
   }
 
   /*
@@ -104,14 +111,18 @@ export class Entity {
   AddFixture(x, y, w, h, density, friction, restitution, issensor, theta) {
     this.fixtureID++;
 
+    let maskBits = 0;
+
+    for (const key in this.MasksMap) {
+      maskBits |= Number(key);
+    }
+
     const fix = new Fixture(
-        this.fixtureID, this.body, x, y, w / SCALE / 2, h / SCALE / 2, density,
-        friction, restitution, issensor, theta);
+        this.fixtureID, this.body, x, y, (w / 2) / SCALE, (h / 2) / SCALE,
+        density, friction, restitution, issensor, theta, this.CategoryBits,
+        maskBits);
 
-    // Store fixture reference
     this.fixtures.push(fix);
-
-    // Wake body to ensure simulation updates
     this.body.setAwake(true);
 
     return fix;

@@ -69,6 +69,10 @@ export class StateManager {
 
     // Current scene/state name
     this.gameState = 'Test';
+
+    this.Masks = [];
+
+    this.ManageCollisions();
   }
 
   /* =====================================================
@@ -79,6 +83,12 @@ export class StateManager {
 
   SerializeEntity(entity) {
     const obj = entity.RenderObject;
+
+    const masks = [];
+
+    for (let key in entity.MasksMap) {
+      masks.push({mask: Number(key), event: entity.MasksMap[key]});
+    }
 
     const entityData = {
 
@@ -95,12 +105,15 @@ export class StateManager {
         b: obj.b,
         alpha: obj.alpha,
 
-        slot: obj.slot,
+        slot: this.Engine.TextureReverse.get(obj.slot),
 
         px: obj.px,
         py: obj.py,
 
         theta: obj.theta,
+
+        categorybits: entity.CategoryBits,
+        maskbits: masks,
 
         bodytype: entity.bodytype,
         id: entity.ID
@@ -148,6 +161,16 @@ export class StateManager {
     return sceneData;
   }
 
+  SerializeMasks() {
+    const data = [];
+
+    for (let key in this.Masks) {
+      data.push({mask: Number(key), event: this.Masks[key]});
+    }
+
+    return data;
+  }
+
 
   /*
   -------------------------------------------------------
@@ -157,17 +180,25 @@ export class StateManager {
   LoadEntity(data) {
     const e = data.entity;
 
+    const maskMap = {};
+
+    for (let mask of (e.maskbits || [])) {
+      maskMap[mask.mask] = mask.event || [];
+    }
+
+    console.log(e.maskbits);
+
     const entity = new Entity(
 
         e.x, e.y, e.z, e.w, e.h,
 
         e.r, e.g, e.b, e.alpha,
 
-        e.slot,
+        this.Engine.TextureMap[e.slot],
 
         e.px, e.py, e.theta,
 
-        this.simulationWorld, e.bodytype, e.id);
+        this.simulationWorld, e.bodytype, e.id, e.categorybits, maskMap);
 
     // Restore physics fixtures
     for (let f of data.fixtures || []) {
@@ -179,6 +210,8 @@ export class StateManager {
 
           f.issensor, f.theta);
     }
+
+
 
     return entity;
   }
@@ -282,6 +315,13 @@ export class StateManager {
       this.audio.loadSound(file.id, file.path);
     }
   }
+
+  LoadTextures(data) {
+    for (let file of data) {
+      this.Engine.LoadTexture(file.id, file.path, file.depth);
+    }
+  }
+
 
   /*
   -------------------------------------------------------
@@ -393,6 +433,17 @@ export class StateManager {
     }
   }
 
+  LoadMasks(data) {
+    const map = {};
+
+    for (let mask of (data || [])) {
+      map[mask.mask] = mask.event || [];
+    }
+
+
+    return map;
+  }
+
   /*
   -------------------------------------------------------
   Synchronizes loaded entities and UI with the renderer
@@ -473,6 +524,20 @@ export class StateManager {
     return data;
   }
 
+  SerializeTextures() {
+    const data = [];
+
+    for (let name in this.Engine.TexturePaths) {
+      data.push({
+        id: name,
+        path: this.Engine.TexturePaths[name],
+        depth: this.Engine.TextureMap[name]
+      });
+    }
+
+    return data;
+  }
+
   /*
   -------------------------------------------------------
   Saves entire game scene into local storage
@@ -500,7 +565,9 @@ export class StateManager {
 
       input: this.SerializeInputEvents(),
 
-      audio: this.SerializeAudio()
+      audio: this.SerializeAudio(),
+      textures: this.SerializeTextures(),
+      masks: this.SerializeMasks()
     };
 
     const json = JSON.stringify(gameScene, null, 2);
@@ -524,6 +591,8 @@ export class StateManager {
 
     this.CameraPos = data.camera;
 
+    this.LoadTextures(data.textures);
+
     for (let e of data.entities || []) {
       const entity = this.LoadEntity(e);
 
@@ -531,10 +600,9 @@ export class StateManager {
     }
 
     this.LoadInputEvents(data.input);
-
     this.LoadUI(data.ui);
-
     this.LoadAudio(data.audio);
+    this.Masks = this.LoadMasks(data.masks);
 
     this.SyncEngine();
   }
@@ -566,7 +634,7 @@ export class StateManager {
 
     const data = JSON.parse(json);
 
-    stateManager.LoadScene(data);
+    this.LoadScene(data);
   }
 
   /*
@@ -606,7 +674,9 @@ export class StateManager {
       entities: this.SerializeScene(this.Entities),
       ui: this.SerializeUI(this.UI),
       input: this.SerializeInputEvents(),
-      audio: this.SerializeAudio()
+      audio: this.SerializeAudio(),
+      textures: this.SerializeTextures(),
+      masks: this.SerializeMasks()
     };
 
     const json = JSON.stringify(scene, null, 2);
@@ -749,6 +819,35 @@ export class StateManager {
   Handles entities, UI and input events
   -------------------------------------------------------
   */
+
+  ManageCollisions() {
+    this.simulationWorld.world.on('begin-contact', (contact) => {
+      const fA = contact.getFixtureA();
+      const fB = contact.getFixtureB();
+
+      const catA = fA.getFilterCategoryBits();
+      const catB = fB.getFilterCategoryBits();
+
+      const eA = fA.getBody().getUserData();
+      const eB = fB.getBody().getUserData();
+
+      if (eA.MasksMap && eA.MasksMap[catB]) {
+        for (let ev of eA.MasksMap[catB]) {
+          this.AddEvent(ev);
+        }
+      }
+
+      if (eB.MasksMap && eB.MasksMap[catA]) {
+        for (let ev of eB.MasksMap[catA]) {
+          this.AddEvent(ev);
+        }
+      }
+
+      console.log(eA.MasksMap, eB.MasksMap);
+    });
+  }
+
+
   update(mx, my, click) {
     // Update entities
     for (let e of this.Entities) {
@@ -768,7 +867,7 @@ export class StateManager {
     }
 
     // Process input bindings
-    for (let input of (this.InputEvents || null)) {
+    for (let input of (this.InputEvents || [])) {
       let triggered = false;
 
       if (input.condition === 'pressed' && this.UISystem.isPressed(input.key))
@@ -805,6 +904,8 @@ export class StateManager {
 
       if (entity.body) this.simulationWorld.destroyBody(entity.body);
     }
+
+    this.Engine.reset();
 
     this.Entities = [];
     this.UI = [];
