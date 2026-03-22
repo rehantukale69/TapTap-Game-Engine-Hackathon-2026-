@@ -1,303 +1,177 @@
-# TapTap Engine – JSON Driven Game Runtime
+# 🚀 TaPTaP Game Engine Hackathon Submission
 
-A lightweight modular game engine built for the **TapTap Hackathon**.
-The engine demonstrates a **data-driven architecture** where gameplay, UI, and input mappings are loaded dynamically from JSON scene files.
+## 📌 Project Overview
 
-The system separates **engine runtime logic** from **game data**, allowing different games or scenes to be created simply by modifying JSON files.
+This project is a custom-built **WebGL-based game engine** designed to demonstrate core game engine architecture along with a functional gameplay prototype.
 
----
-
-# Features
-
-* WebGL based renderer
-* Physics simulation using Planck.js
-* Entity system with fixtures and physics bodies
-* Event-driven gameplay system
-* JSON driven scene loading
-* Runtime UI system
-* Keyboard and mouse input handling
-* Scene serialization and saving
-* Dynamic scene switching
-* UI actions mapped to engine events
+The engine focuses on modularity, real-time rendering, and interactive systems, culminating in a playable demo where users can control a player entity and dodge obstacles.
 
 ---
 
-# Running the Engine
+## 🧠 Development Phases
 
-No build process is required.
+### 🧩 1. Engine Blueprint
 
-Simply open:
+This phase focused on planning and designing the foundation of the engine.
 
-```
-index.html
-```
+Key work:
 
-in a browser.
+* Defined overall **engine architecture**
+* Designed **Entity-Component structure**
+* Planned **rendering pipeline**
+* Established folder structure and modular system design
+* Identified core systems:
 
-Alternatively you may run a simple local server:
+  * Rendering System
+  * Input System
+  * Scene Management
+  * Game Loop
 
-```
-python -m http.server
-```
-
-Then open:
-
-```
-http://localhost:8000
-```
+Outcome:
+A clear blueprint that guided structured and scalable development.
 
 ---
 
-# Controls
+### ⚙️ 2. Core Engine Proof
 
-| Key / Input        | Action                                   |
-|--------------------|-------------------------------------------|
-| **A**              | Load scene from JSON file                 |
-| **B**              | Save current scene to disk                |
-| **P**              | Play background music                     |
-| **I**              | Move player to the **left**               |
-| **UI Button**      | Move player to the **right**              |
-| **Mouse Click**    | Trigger UI buttons                        |
-| **Configured Keys**| Trigger input events defined in JSON      |
+This phase validated that the engine systems actually work together.
 
+Implemented:
 
+* Functional **Entity system**
+* Basic **component handling**
+* Working **rendering pipeline**
+* Real-time **input handling**
+* Scene initialization and update loop
 
-Input behavior such as movement or actions is defined through the **scene JSON input mapping system**.
+Outcome:
+A working engine core capable of:
 
-Example input mapping:
-
-```json
-{
-  "key": "KeyW",
-  "condition": "hold",
-  "event": {
-    "type": "MOVE_ENTITY",
-    "entityID": "Player",
-    "dx": 0,
-    "dy": 0.1
-  }
-}
-```
+* Rendering entities
+* Handling user input
+* Updating game state dynamically
 
 ---
 
-# Engine Architecture
+### 🎮 3. Prototype Build
 
-The engine follows a **modular design**.
+This phase demonstrates the engine through a playable game.
 
-```
-src/
+Gameplay features:
 
-renderer/
-  Renderer.js
-  Object.js
-  Text.js
+* Press **Enter** to start the game
+* Player can move **left and right**
+* Obstacles spawn and move toward the player
+* Collision/dodge mechanics implemented
+* Continuous gameplay loop
 
-entity/
-  Entity.js
+Objective:
 
-simulation/
-  Simulation.js
+* Avoid obstacles as long as possible
+* Demonstrates real-time input + rendering + physics interaction
 
-ui/
-  UISystem.js
-  TextButton.js
-  TextureButton.js
-
-state/
-  GameStateManager.js
-
-manager/
-  Manager.js
-```
-
-Game data is stored separately in:
-
-```
-scenes/
-   scene1.json
-```
-
-This separation ensures that the engine runtime remains reusable while the gameplay configuration is handled through external data files.
+Outcome:
+A fully playable prototype built on top of the custom engine.
 
 ---
 
-# Scene JSON Structure
+## 🎮 Controls
 
-Scenes are defined using JSON files which describe:
-
-* metadata
-* physics configuration
-* camera settings
-* entities
-* UI elements
-* input mappings
-
-Example structure:
-
-```json
-{
-  "metadata": {
-    "name": "scene1",
-    "version": 1
-  },
-
-  "physics": [0, -10],
-
-  "camera": [0, 0, 0],
-
-  "entities": [],
-  "ui": [],
-  "input": []
-}
-```
+| Action     | Key             |
+| ---------- | --------------- |
+| Start Game | Enter           |
+| Move Left  | Left Arrow / A  |
+| Move Right | Right Arrow / D |
 
 ---
 
-# Entity Definition
+## ▶️ How to Run the Project
 
-Entities define visual objects with physics bodies.
+### 🔧 Requirements
 
-```json
-{
-  "entity": {
-    "id": "Player",
-    "x": 0,
-    "y": 0,
-    "z": -400,
-    "w": 50,
-    "h": 50,
-    "bodytype": "dynamic"
-  },
-  "fixtures": []
-}
-```
+* A modern web browser (Chrome recommended)
+* Basic local server (optional but recommended)
 
 ---
 
-# UI System
+### 🚀 Steps to Run
 
-UI elements are defined in JSON and created dynamically at runtime.
+#### Option 1: Direct Run
 
-Supported UI types:
+1. Download or clone the repository:
 
-* **TextButton**
-* **TextureButton**
-
-Example:
-
-```json
-{
-  "type": "TextButton",
-  "text": "Move Player",
-  "x": 0,
-  "y": 200,
-  "z": -400,
-  "action": {
-    "type": "MOVE_ENTITY",
-    "entityID": "Player",
-    "dx": 0.1,
-    "dy": 0
-  }
-}
-```
+   ```bash
+   git clone <your-repo-link>
+   ```
+2. Open the project folder
+3. Open `index.html` in your browser
 
 ---
 
-# Event System
+#### Option 2: Using Local Server (Recommended)
 
-Gameplay behavior is controlled through a central **event dispatcher**.
+1. Navigate to project folder:
 
-Supported events include:
+   ```bash
+   cd your-project
+   ```
+2. Run a local server:
 
-* MOVE_ENTITY
-* SET_ENTITY_POS
-* ROT_ENTITY
-* APPLY_FORCE
-* APPLY_IMP
-* SET_VELOCITY
-* DESTROY_ENTITY
-* SET_CAMERA_POSITION
-* MOVE_CAMERA
-* CHANGE_STATE
-* LOAD_SCENE
+   ```bash
+   npx serve
+   ```
 
-Events can be triggered by:
+   OR
 
-* UI buttons
-* keyboard input
-* scene scripts
+   ```bash
+   python -m http.server
+   ```
+3. Open the provided localhost URL in browser
 
 ---
 
-# Scene Loading
+## 🧠 How to Use the Engine
 
-Scenes can be loaded dynamically at runtime.
+* Launch the project
+* Press **Enter** to start the game
+* Use movement keys to control the player
+* Observe how:
 
-Example:
+  * entities are rendered
+  * input affects gameplay
+  * systems interact in real-time
 
-```javascript
-StateManager.LoadFromDisk("../../scenes/scene1");
-```
-
-The engine will automatically:
-
-1. Parse the JSON file
-2. Create entities
-3. Construct UI
-4. Register input events
-5. Sync objects with the renderer
+This demonstrates the **engine’s architecture in action**.
 
 ---
 
-# Scene Saving
+## ⚠️ Note on Checkpoint Submission
 
-Scenes can be exported to JSON using:
+One intermediate checkpoint was not submitted on the platform.
 
-```
-B key
-```
+However, the full development lifecycle is clearly represented through:
 
-This serializes the current runtime scene and downloads a JSON file.
-
----
-
-# Engine Loop
-
-The engine runs using a continuous update loop:
-
-```
-Input → Update → Physics → Render → Repeat
-```
-
-Implemented using `requestAnimationFrame`.
+* Structured phases in this README
+* Git commit history showing progressive development
+* Final working prototype
 
 ---
 
-# Technologies Used
+## 🎯 Final Deliverable
 
-* **WebGL**
-* **gl-matrix**
-* **Planck.js Physics Engine**
-* **JavaScript ES Modules**
+A functional game engine with:
 
----
-
-# Hackathon Objective
-
-This project demonstrates a **modular JSON-driven game engine runtime** where gameplay behavior can be modified without altering engine source code.
-
-The architecture separates:
-
-```
-Engine Runtime
-Game Data
-```
-
-allowing the engine to serve as a reusable platform for multiple games.
+* Modular architecture
+* Core engine systems implemented
+* Playable prototype demonstrating real-time interaction
 
 ---
 
-# Author
+## 🚀 Future Improvements
 
-Rehant Ukale
+* Advanced physics system
+* Level design support
+* UI editor enhancements
+* Performance optimization
+
+---
