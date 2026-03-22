@@ -66,9 +66,11 @@ export class UISystem {
     this.glcanvas.addEventListener('mousemove', (e) => {
       const rect = this.glcanvas.getBoundingClientRect();
 
-      // Convert screen coordinates to canvas coordinates
-      this.mouseX = e.clientX - rect.left;
-      this.mouseY = e.clientY - rect.top;
+      const scaleX = this.glcanvas.width / rect.width;
+      const scaleY = this.glcanvas.height / rect.height;
+
+      this.mouseX = (e.clientX - rect.left) * scaleX;
+      this.mouseY = (e.clientY - rect.top) * scaleY;
     });
 
     // Mouse button pressed

@@ -116,6 +116,11 @@ export class StateManager {
         maskbits: masks,
 
         bodytype: entity.bodytype,
+        gravity: entity.gravity,
+        velocity: entity.velocity,
+
+        randp: entity.randp,
+        randv: entity.randv,
         id: entity.ID
       },
 
@@ -186,8 +191,10 @@ export class StateManager {
       maskMap[mask.mask] = mask.event || [];
     }
 
+    // if (e.bodytype === 'kinematic' && e.velocity == ) {
+
     // console.log(this.Engine.TextureSizes);
-    console.log(Array.from(this.Engine.TextureSizes));
+    // console.log(Array.from(this.Engine.TextureSizes));
 
     const entity = new Entity(
 
@@ -200,7 +207,8 @@ export class StateManager {
         e.px, e.py, e.theta,
 
         this.simulationWorld, e.bodytype, e.id, e.categorybits, maskMap,
-        this.Engine.TextureSizes[e.slot]);
+        this.Engine.TextureSizes[e.slot], e.gravity ?? null,
+        e.bodytype == 'kinematic' ? e.velocity : null, e.randp, e.randv);
 
     // Restore physics fixtures
     for (let f of data.fixtures || []) {
@@ -492,7 +500,7 @@ export class StateManager {
   AddInputEvent(inputevent) {
     this.InputEvents.push(inputevent);
 
-    console.log(inputevent);
+    // console.log(inputevent);
   }
 
   /*
@@ -590,7 +598,7 @@ export class StateManager {
       console.warn('Scene version mismatch');
     }
 
-    console.log(data);
+    // console.log(data);
 
     this.gravity = data.physics;
 
@@ -725,6 +733,7 @@ export class StateManager {
 
         e.body.setTransform(
             this.simulationWorld.pl.Vec2(event.x, event.y), e.body.getAngle());
+        console.log(event);
 
         break;
 
@@ -740,7 +749,15 @@ export class StateManager {
 
         if (!e) return;
 
-        this.RemoveEntity(e);
+        this.RemoveEntity(this.EntityMap(e.id));
+
+        break;
+
+      case 'SPAWN_ENTITY':
+
+        this.AddEntity(this.LoadEntity(event.data));
+        console.log(event.data);
+        this.SyncEngine();
 
         break;
 
@@ -845,7 +862,31 @@ export class StateManager {
         }
       }
 
-      console.log(eA.MasksMap, eB.MasksMap);
+      if (fA.isSensor() || fB.isSensor()) {
+        // A → B
+        if (eA.MasksMap && eA.MasksMap[catB]) {
+          const entry = eA.MasksMap[catB];
+
+          if (entry.event) {
+            for (let ev of entry.event) {
+              this.AddEvent(ev);
+            }
+          }
+        }
+
+        // B → A
+        if (eB.MasksMap && eB.MasksMap[catA]) {
+          const entry = eB.MasksMap[catA];
+
+          if (entry.event) {
+            for (let ev of entry.event) {
+              this.AddEvent(ev);
+            }
+          }
+        }
+      }
+
+      // console.log(eA.MasksMap, eB.MasksMap);
     });
   }
 
@@ -921,6 +962,10 @@ export class StateManager {
   Adds entity to the scene and map
   */
   AddEntity(entity) {
+    if (entity.ID == 'Obstacle1') {
+      entity.body.setLinearVelocity({x: -10, y: 0});
+    }
+
     this.Entities.push(entity);
 
     this.EntityMap.set(entity.ID, entity);

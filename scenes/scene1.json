@@ -155,7 +155,7 @@
     },
 
     {
-      "key": "KeyA",
+      "key": "ENTER",
       "condition": "pressed",
       "event": [
         {

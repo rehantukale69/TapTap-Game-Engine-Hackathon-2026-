@@ -13,6 +13,8 @@ export class Renderer {
 
     this.glcanvas = document.getElementById('glcanvas');
 
+
+
     let gl2 = this.glcanvas.getContext('webgl2');
     let gl1 = this.glcanvas.getContext('webgl');
 
@@ -315,6 +317,7 @@ export class Renderer {
     }
 
 
+
     this.gl.bindVertexArray(this.VAO);
 
     const IndicesTyped = new Uint16Array(this.Indices);
@@ -354,7 +357,6 @@ export class Renderer {
 
   AddText(texts) {
     this.TextObjects.push(texts);
-    console.log('Adding text:', texts);
   };
 
   reset() {

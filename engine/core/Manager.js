@@ -97,7 +97,7 @@ export class Manager {
 
     if (this.UI.isPressed('KeyA')) {
       this.StateManager.reset();
-      this.StateManager.LoadfomDisk('../../scenes/scene1');
+      this.StateManager.LoadfomDisk('../../scenes/game');
       this.StateManager.SyncEngine();
     }
 

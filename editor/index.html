@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Editor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ═══ TOP MENU BAR ═══ -->
+  <nav id="menu-bar">
+    <span id="editor-brand">⬡ GameEditor</span>
+
+    <div class="menu-item">
+      <button class="menu-btn">Project</button>
+      <div class="dropdown">
+        <button onclick="editor.newProject()">New Project</button>
+        <button onclick="editor.openProject()">Open Project</button>
+        <button onclick="editor.saveProject()">Save Project</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <button class="menu-btn" onclick="editor.playScene()" style="color: #4ade80; font-weight: bold;">▶ Play Scene</button>
+    </div>
+
+    <div class="menu-item">
+      <button class="menu-btn" onclick="editor.addEntity()">Add Entity</button>
+    </div>
+
+    <div class="menu-item">
+      <button class="menu-btn" onclick="editor.addText()">Add Text</button>
+    </div>
+
+    <div class="menu-item">
+      <button class="menu-btn">Add UI Button ▾</button>
+      <div class="dropdown">
+        <button onclick="editor.addUIButton('text')">Text Button</button>
+        <button onclick="editor.addUIButton('texture')">Texture Button</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <button class="menu-btn" onclick="editor.openInputEvents()">Input Events</button>
+    </div>
+  </nav>
+
+  <!-- ═══ DOCK OVERLAY (shown while dragging a panel) ═══ -->
+  <div id="dock-overlay">
+    <div class="dock-hint" id="hint-left" data-zone="left">◀ Left</div>
+    <div class="dock-hint" id="hint-right" data-zone="right">Right ▶</div>
+    <div class="dock-hint" id="hint-bottom" data-zone="bottom">▼ Bottom</div>
+  </div>
+
+  <!-- ═══ MAIN EDITOR BODY ═══ -->
+  <div id="editor-body">
+
+    <!-- LEFT DOCK: State Manager + Scene Manager side-by-side -->
+    <div class="dock-zone" id="dock-left">
+
+      <div class="panel" id="panel-states">
+        <div class="panel-header">
+          <span class="panel-title">States</span>
+          <button class="icon-btn" onclick="editor.addState()" title="Add State">+</button>
+        </div>
+        <div class="panel-body">
+          <ul class="item-list" id="state-list"></ul>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-scenes">
+        <div class="panel-header">
+          <span class="panel-title">Scenes</span>
+          <button class="icon-btn" onclick="editor.addScene()" title="Add Scene">+</button>
+        </div>
+        <div class="panel-body">
+          <ul class="item-list" id="scene-list"></ul>
+        </div>
+      </div>
+
+    </div><!-- end #dock-left -->
+
+    <!-- CENTER: CANVAS (not draggable) -->
+    <main id="canvas-area">
+      <div id="canvas-toolbar">
+        <span id="active-scene-label">No scene selected</span>
+        <div class="canvas-tools">
+          <button class="tool-btn" id="tool-select">✦ Select</button>
+          <button class="tool-btn" id="tool-move">✥ Move</button>
+        </div>
+      </div>
+      <div id="canvas-viewport">
+        <canvas id="glcanvas"></canvas>
+      </div>
+    </main>
+
+    <!-- RIGHT DOCK: Inspector -->
+    <div class="dock-zone" id="dock-right">
+      <div class="panel" id="panel-inspector">
+        <div class="panel-header">
+          <span class="panel-title">Inspector</span>
+        </div>
+        <div class="panel-body" id="inspector-content">
+          <div class="inspector-empty">
+            <p>Nothing selected</p>
+            <small>Click an item to inspect it</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end #editor-body -->
+
+  <!-- BOTTOM DOCK: Resources / Entities / UI / Texts -->
+  <div class="dock-zone" id="dock-bottom">
+    <div class="panel" id="panel-assets">
+
+      <div class="panel-header" id="bottom-panel-header">
+        <!-- tab bar lives inside the header so dragging still works -->
+        <div id="bottom-tabs">
+          <button class="tab-btn active" data-tab="resources">Resources</button>
+          <button class="tab-btn" data-tab="entities">Entities</button>
+          <button class="tab-btn" data-tab="ui-elements">UI Elements</button>
+          <button class="tab-btn" data-tab="texts">Texts</button>
+        </div>
+      </div>
+
+      <div class="panel-body" id="bottom-content">
+        <div class="tab-pane active" id="tab-resources">
+          <div class="resource-grid" id="resources-grid"></div>
+        </div>
+        <div class="tab-pane" id="tab-entities">
+          <ul class="item-list horizontal" id="entities-list"></ul>
+        </div>
+        <div class="tab-pane" id="tab-ui-elements">
+          <ul class="item-list horizontal" id="ui-elements-list"></ul>
+        </div>
+        <div class="tab-pane" id="tab-texts">
+          <ul class="item-list horizontal" id="texts-list"></ul>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- end #dock-bottom -->
+
+  <!-- Engine Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/planck@0.3.3/dist/planck.min.js"></script>
+  <!-- <script type="module" src="./engine.js"></script> -->
+
+  <script src="editor.js"></script>
+</body>
+
+</html>

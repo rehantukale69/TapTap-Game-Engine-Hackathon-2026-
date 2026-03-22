@@ -40,10 +40,17 @@ export class Entity {
   */
   constructor(
       x, y, z, scale, r, g, b, alpha, slot, px, py, theta, simulationWorld,
-      bodytype, ID, categoryBits, maskmap, texturesize) {
+      bodytype, ID, categoryBits, maskmap, texturesize, gravity = null,
+      velocity = null, randp, randv) {
     // Position and size
-    this.x = x;
-    this.y = y;
+    this.x = randp ?
+        (Math.floor(Math.random() * (randp.max.x - randp.min.x + 1)) +
+         randp.min.x) :
+        x;
+    this.y = randp ?
+        (Math.floor(Math.random() * (randp.max.y - randp.min.y + 1)) +
+         randp.min.y) :
+        y;
     this.w = texturesize.w * scale;
     this.h = texturesize.h * scale;
 
@@ -55,14 +62,26 @@ export class Entity {
     // Body type (static/dynamic)
     this.bodytype = bodytype;
 
+    this.gravity = gravity;
+    this.velocity = {
+      x: randv ? Math.floor(Math.random() * (randv.max.x - randv.min.x + 1)) +
+              randv.min.x :
+                 (velocity?.x ?? 0),
+
+      y: randv ? Math.floor(Math.random() * (randv.max.y - randv.min.y + 1)) +
+              randv.min.y :
+                 (velocity?.y ?? 0)
+    };
     /*
     -----------------------------------------------------
     Rendering Object
     -----------------------------------------------------
     Represents the visual appearance of the entity.
     */
+
+
     this.RenderObject = new Object(
-        x, y, z, this.w, this.h, r, g, b, alpha, slot, px, py, theta);
+        this.x, this.y, z, this.w, this.h, r, g, b, alpha, slot, px, py, theta);
 
     /*
     -----------------------------------------------------
@@ -71,7 +90,15 @@ export class Entity {
     Physics engines use meter units instead of pixels,
     so positions are converted using SCALE.
     */
-    this.body = this.World.createBoxBody(x / SCALE, y / SCALE, bodytype);
+    this.body =
+        this.World.createBoxBody(this.x / SCALE, this.y / SCALE, bodytype);
+
+    if (bodytype == 'kinematic') {
+      this.body.setLinearVelocity(
+          planck.Vec2(this.velocity.x, this.velocity.y));
+    }
+
+    this.body.setGravityScale(this.gravity ?? 1);
 
     // Wake body so physics simulation affects it
     this.body.setAwake(true);
@@ -84,6 +111,11 @@ export class Entity {
     */
     this.fixtures = [];
     this.fixtureID = 0;
+
+
+
+    this.randp = randp;
+    this.randv = randv;
 
     // Unique entity identifier
     this.ID = ID;

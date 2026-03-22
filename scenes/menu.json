@@ -1,0 +1,167 @@
+{
+  "metadata": {
+    "name": "basic_scene",
+    "version": 1
+  },
+
+  "physics": [0, -10],
+
+  "camera": [0, 0, 0],
+
+  "entities": [
+
+    {
+      "entity": {
+        "x": 0,
+        "y": 40,
+        "z": -400,
+        "scale": 0.1,
+
+        "r": 1, "g": 1, "b": 1, "alpha": 1,
+
+        "slot": "player",
+
+        "px": 0,
+        "py": 0,
+        "theta": 0,
+
+        "categorybits": 1,
+
+        "maskbits": [
+          { "mask": 2,
+            "event": [
+              {
+                "type": "PLAY_AUDIO",
+                "audio": "jump",
+                "loop": false,
+                "volume": 0.75
+              }
+            ]
+          }
+        ],
+
+        "bodytype": "dynamic",
+        "id": "Player"
+      },
+
+      "fixtures": [
+        {
+          "x": 0, "y": 0,
+          "w": 51.2,
+          "h": 51.2,
+          "density": 1,
+          "friction": 0.2,
+          "restitution": 0.8,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+    },
+
+    {
+      "entity": {
+        "x": 0,
+        "y": -150,
+        "z": -400,
+        "scale": 0.3,
+
+        "r": 1, "g": 1, "b": 1, "alpha": 1,
+
+        "slot": "ground",
+
+        "px": 0,
+        "py": 0,
+        "theta": 0,
+
+        "categorybits": 2,
+
+        "maskbits": [
+          { "mask": 1 }
+        ],
+
+        "bodytype": "static",
+        "id": "Ground"
+      },
+
+      "fixtures": [
+        {
+          "x": 0, "y": 0,
+          "w": 576,
+          "h": 324,
+          "density": 1,
+          "friction": 0.5,
+          "restitution": 0.2,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+    }
+
+  ],
+
+  "input": [
+     {
+      "key": "keyA",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/game"
+        }
+      ]
+    }
+  ],
+
+  "ui": [
+
+    {
+      "type": "TextButton",
+      "text": "Enter A",
+
+      "x": 0,
+      "y": -100,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.3,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+          {
+            "type": "MOVE_ENTITY",
+            "entityID": "Player",
+            "dx": 0.5,
+            "dy": 0
+          }
+        ]
+      }
+    }
+  ],
+
+  "audio": [
+    {
+      "id": "jump",
+      "path": "../../Resources/jump.mp3"
+    }
+  ],
+
+  "textures": [
+    {
+      "id": "player",
+      "path": "../../Resources/5.png",
+      "depth": 5
+    },
+    {
+      "id": "ground",
+      "path": "../../Resources/2.png",
+      "depth": 2
+    }
+  ]
+}

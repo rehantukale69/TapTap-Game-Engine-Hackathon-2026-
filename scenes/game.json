@@ -1,0 +1,377 @@
+{
+  "metadata": {
+    "name": "flappy_dodge_scene",
+    "version": 1
+  },
+
+  "physics": [0, -10],
+
+  "camera": [0, 0, 0],
+
+  "entities": [
+
+    {
+      "entity": {
+        "x": 0,
+        "y": 40,
+        "z": -400,
+        "scale": 0.1,
+        "r": 1, "g": 1, "b": 1, "alpha": 1,
+
+        "slot": "player",
+
+        "px": 0,
+        "py": 0,
+
+        "theta": 0,
+
+        "categorybits": 1,
+
+        "maskbits": [
+          { "mask": 2 },
+          { "mask": 4,
+           "event": [
+            
+              {
+          "type": "PLAY_AUDIO",
+          "audio": "die",
+          "loop": false,
+          "volume": 0.75
+        },
+         {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/menu"
+        }
+           ]
+         }
+        ],
+
+        "bodytype": "dynamic",
+        "randp": null,
+        "randv":null,
+        "id": "Player"
+      },
+
+      "fixtures": [
+        {
+          "x": 0, "y": 0,
+          "w": 10.24, "h": 10.24,
+          "density": 1,
+          "friction": 0,
+          "restitution": 1,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+    },
+
+    {
+      "entity": {
+        "x": 0,
+        "y": -150,
+        "z": -400,
+        "scale": 0.3,
+        "r": 1, "g": 1, "b": 1, "alpha": 1,
+
+        "slot": "ground",
+
+        "px": 0,
+        "py": 0,
+
+        "theta": 0,
+
+        "categorybits": 2,
+
+        "maskbits": [
+          { "mask": 1,
+          "event": [
+        {
+          "type": "PLAY_AUDIO",
+          "audio": "jump",
+          "loop": false,
+          "volume": 0.75
+        }
+      ]
+          }
+        ],
+
+        "bodytype": "static",
+        "randp": null,
+        "randv":null,
+        "id": "Ground"
+      },
+
+      "fixtures": [
+        {
+          "x": 0, "y": 0,
+          "w": 800, "h": 42 ,
+          "density": 1,
+          "friction": 0,
+          "restitution":1,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+    },
+
+    {
+      "entity": {
+        "x": -300,
+        "y": 0,
+        "z": -400,
+        "scale": 0.2,
+        "r": 1, "g": 1, "b": 1, "alpha": 1,
+
+        "slot": "wall",
+
+        "px": 0,
+        "py": 0,
+
+        "theta": 0,
+
+        "categorybits": 8,
+
+        "maskbits": [
+          {
+            "mask": 4,
+            "event": [
+              
+              {
+                "type": "PLAY_AUDIO",
+                "audio": "bgm",
+                "loop": false,
+                "volume": 0.75
+              },
+              {
+                "type": "DESTROY_ENTITY",
+                "id": "Obstacle1"
+              },
+              {
+            "mask": 1,
+            "event": [
+              {
+                "type": "CHANGE_STATE",
+                "state": "Menu"
+              }
+            ]
+          },
+              {
+                "type": "SPAWN_ENTITY",
+                "data": {
+      "entity": {
+        "x": 100,
+        "y": 20,
+        "z": -400,
+        "scale": 0.006,
+        "r": 1, "g": 0, "b": 0, "alpha": 1,
+
+        "slot": "ground",
+
+        "px": 0,
+        "py": 0,
+
+        "theta": 0,
+
+        "categorybits": 4,
+
+        "maskbits": [
+          {
+            "mask": 1,
+            "event": [
+              {
+                "type": "CHANGE_STATE",
+                "state": "GameOver"
+              }
+            ]
+          },
+          {
+            "mask": 8,
+            "event": []
+          }
+          
+        ],
+
+        "bodytype": "kinematic",
+        
+        "gravity": 0,
+        "velocity": { "x": -10,"y": 0 },
+
+        "randp": {"max": { "x": 300,"y": 100 } ,"min":{ "x": 300,"y": -100 } },
+        "randv":{"max": { "x": 25,"y": 0 } ,"min":{ "x": -25,"y": 0 } },
+        "id": "Obstacle1"
+      },
+
+      "fixtures": [
+        {
+          "x": 0, "y": 0,
+          "w": 11.52, "h": 6.48,
+          "density": 1,
+          "friction": 0,
+          "restitution": 0,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+    }
+              }
+            ]
+          }
+        ],
+
+        "bodytype": "static",
+        "randp": null,
+        "randv":null,
+        "id": "RespawnWall"
+      },
+
+      "fixtures": [
+        {
+          "x": 0, "y": 0,
+          "w": 10, "h": 200,
+          "density": 1,
+          "friction": 0,
+          "restitution": 0,
+          "issensor": true,
+          "theta": 0
+        }
+      ]
+    },
+
+    {
+      "entity": {
+        "x": 100,
+        "y": 20,
+        "z": -400,
+        "scale": 0.006,
+        "r": 1, "g": 0, "b": 0, "alpha": 1,
+
+        "slot": "ground",
+
+        "px": 0,
+        "py": 0,
+
+        "theta": 0,
+
+        "categorybits": 4,
+
+        "maskbits": [
+          {
+            "mask": 1,
+            "event": [
+             
+              
+            ]
+          },
+          {
+            "mask": 8,
+            "event": []
+          }
+          
+        ],
+
+        "bodytype": "kinematic",
+        
+        "gravity": 0,
+        "velocity": { "x": -10,"y": 0 },
+
+        "randp": {"max": { "x": 300,"y": 100 } ,"min":{ "x": 300,"y": -100 } },
+        "randv":{"max": { "x": 25,"y": 0 } ,"min":{ "x": -25,"y": 0 } },
+        "id": "Obstacle1"
+      },
+
+      "fixtures": [
+        {
+          "x": 0, "y": 0,
+          "w": 11.52, "h": 6.48,
+          "density": 1,
+          "friction": 0,
+          "restitution": 0,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+    }
+
+  ],
+
+  "input": [
+    {
+      "key": "ArrowLeft",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "MOVE_ENTITY",
+          "entityID": "Player",
+          "dx": -1,
+          "dy": 0
+        }
+      ]
+    },
+    {
+      "key": "ArrowRight",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "MOVE_ENTITY",
+          "entityID": "Player",
+          "dx": 1,
+          "dy": 0
+        }
+      ]
+    },
+    {
+      "key": "KeyB",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "SAVE_SCENE",
+          "scene": "scene1"
+        }
+      ]
+      
+    },
+    {
+      "key": "KeyP",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "PLAY_AUDIO",
+          "audio": "bgm",
+          "loop": false,
+          "volume": 0.75
+        }
+      ]
+    }
+  ],
+
+  "ui": [],
+
+  "audio": [
+     {
+      "id": "jump",
+      "path": "../../Resources/jump.mp3"
+    },
+     {
+      "id": "die",
+      "path": "../../Resources/die.mp3"
+    }
+  ],
+
+  "textures": [
+    {
+      "id": "player",
+      "path": "../../Resources/5.png",
+      "depth": 5
+    },
+    {
+      "id": "ground",
+      "path": "../../Resources/2.png",
+      "depth": 2
+    },
+    {
+      "id": "wall",
+      "path": "../../Resources/4.png",
+      "depth": 4
+    }
+  ]
+}
