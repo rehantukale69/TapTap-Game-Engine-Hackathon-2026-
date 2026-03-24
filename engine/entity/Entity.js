@@ -81,7 +81,8 @@ export class Entity {
 
 
     this.RenderObject = new Object(
-        this.x, this.y, z, this.w, this.h, r, g, b, alpha, slot, px, py, theta);
+        this.x, this.y, z, this.w, this.h, r, g, b, alpha, slot, px, py, theta,
+        texturesize);
 
     /*
     -----------------------------------------------------

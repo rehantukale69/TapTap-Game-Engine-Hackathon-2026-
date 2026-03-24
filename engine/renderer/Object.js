@@ -32,7 +32,7 @@ export class Object {
   theta        → rotation angle
   -------------------------------------------------------
   */
-  constructor(x, y, z, w, h, r, g, b, alpha, slot, px, py, theta) {
+  constructor(x, y, z, w, h, r, g, b, alpha, slot, px, py, theta, texturesize) {
     /*
     -----------------------------------------------------
     Create the four vertices that form a quad
@@ -45,22 +45,23 @@ export class Object {
 
       // Top-right vertex
       new Vertex(
-          x, y, z, r, g, b, alpha, slot, 1.0, 1.0, w / 2, h / 2, px, py, theta),
+          x, y, z, r, g, b, alpha, slot, (texturesize.w) / 1920,
+          (texturesize.h) / 1920, w / 2, h / 2, px, py, theta),
 
       // Bottom-right vertex
       new Vertex(
-          x, y, z, r, g, b, slot, alpha, 1.0, 0.0, w / 2, -h / 2, px, py,
-          theta),
+          x, y, z, r, g, b, alpha, slot, (texturesize.w) / 1920, 0.0, w / 2,
+          -h / 2, px, py, theta),
 
       // Bottom-left vertex
       new Vertex(
-          x, y, z, r, g, b, slot, alpha, 0.0, 0.0, -w / 2, -h / 2, px, py,
+          x, y, z, r, g, b, alpha, slot, 0.0, 0.0, -w / 2, -h / 2, px, py,
           theta),
 
       // Top-left vertex
       new Vertex(
-          x, y, z, r, g, b, slot, alpha, 0.0, 1.0, -w / 2, h / 2, px, py,
-          theta),
+          x, y, z, r, g, b, alpha, slot, 0.0, (texturesize.h) / 1920, -w / 2,
+          h / 2, px, py, theta),
     ];
 
     /*
@@ -90,6 +91,7 @@ export class Object {
 
     // Rotation angle
     this.theta = theta;
+    this.texturesize = texturesize;
   }
 
   /*
@@ -109,12 +111,14 @@ export class Object {
       // Top-right vertex
       new Vertex(
           this.x, this.y, this.z, this.r, this.g, this.b, this.alpha, this.slot,
-          1.0, 1.0, this.w / 2, this.h / 2, this.px, this.py, this.theta),
+          (this.texturesize.w) / 1920, (this.texturesize.h) / 1920, this.w / 2,
+          this.h / 2, this.px, this.py, this.theta),
 
       // Bottom-right vertex
       new Vertex(
           this.x, this.y, this.z, this.r, this.g, this.b, this.alpha, this.slot,
-          1.0, 0.0, this.w / 2, -this.h / 2, this.px, this.py, this.theta),
+          (this.texturesize.w) / 1920, 0.0, this.w / 2, -this.h / 2, this.px,
+          this.py, this.theta),
 
       // Bottom-left vertex
       new Vertex(
@@ -124,7 +128,8 @@ export class Object {
       // Top-left vertex
       new Vertex(
           this.x, this.y, this.z, this.r, this.g, this.b, this.alpha, this.slot,
-          0.0, 1.0, -this.w / 2, this.h / 2, this.px, this.py, this.theta),
+          0.0, (this.texturesize.h) / 1920, -this.w / 2, this.h / 2, this.px,
+          this.py, this.theta),
     ];
   }
 }

@@ -258,7 +258,6 @@ export class StateManager {
   */
   SerializeTextButton(button) {
     return {
-
       type: 'TextButton',
 
       text: button.RenderText.text,
@@ -277,7 +276,8 @@ export class StateManager {
 
       slot: button.slot,
 
-      action: this.SerializeButtonAction(button.action)
+      action: this.SerializeButtonAction(button.action),
+      randp: button.randp
     };
   }
 
@@ -311,7 +311,9 @@ export class StateManager {
 
       theta: button.RenderObject.theta,
 
-      action: this.SerializeButtonAction(button.action)
+      action: this.SerializeButtonAction(button.action),
+      randp: button.randp,
+      scale: button.scale,
     };
   }
 
@@ -421,7 +423,7 @@ export class StateManager {
 
             this.glyphMap,
 
-            action));
+            action, ui.randp));
       }
 
       else if (ui.type === 'TextureButton') {
@@ -441,9 +443,11 @@ export class StateManager {
 
             ui.theta,
 
-            action));
+            action, ui.randp, ui.scale, this.Engine.TextureSizes[ui.slot]));
       }
     }
+
+    console.log(this.UI);
   }
 
   LoadMasks(data) {

@@ -34,30 +34,46 @@ export class TextureButton {
   -------------------------------------------------------
   */
   constructor(
-      x, y, z, w, h, r, g, b, alpha, slot, px, py, theta, action = null) {
-    // Create render object representing the textured UI quad
-    this.RenderObject =
-        new Object(x, y, z, w, h, r, g, b, alpha, slot, px, py, theta);
-
+      x, y, z, w, h, r, g, b, alpha, slot, px, py, theta, action = null, randp,
+      scale, texturesize) {
     // Position
-    this.x = x;
-    this.y = y;
+    this.x = randp ?
+        (Math.floor(Math.random() * (randp.max.x - randp.min.x + 1)) +
+         randp.min.x) :
+        x;
+    this.y = randp ?
+        (Math.floor(Math.random() * (randp.max.y - randp.min.y + 1)) +
+         randp.min.y) :
+        y;
+
     this.z = z;
 
     // Size of button
-    this.w = w;
-    this.h = h;
+    this.w = texturesize.w * scale;
+    this.h = texturesize.h * scale;
 
     // Color tint
     this.r = r;
     this.g = g;
     this.b = b;
 
+    this.randp = randp;
+
     // Transparency
     this.alpha = alpha;
 
     // Rendering layer
     this.slot = slot;
+
+    this.texturesize = texturesize;
+    this.scale = scale;
+
+    // Create render object representing the textured UI quad
+    this.RenderObject = new Object(
+        this.x, this.y, this.z, this.w, this.h, this.r, this.g, this.b,
+        this.alpha, this.slot, px, py, theta, this.texturesize);
+
+
 
     // Selection state (can be used for highlighting)
     this.Selected = false;

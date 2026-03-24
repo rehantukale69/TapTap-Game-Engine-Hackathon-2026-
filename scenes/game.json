@@ -13,9 +13,9 @@
     {
       "entity": {
         "x": 0,
-        "y": 40,
+        "y": 0,
         "z": -400,
-        "scale": 0.1,
+        "scale": 0.05,
         "r": 1, "g": 1, "b": 1, "alpha": 1,
 
         "slot": "player",
@@ -55,7 +55,7 @@
       "fixtures": [
         {
           "x": 0, "y": 0,
-          "w": 10.24, "h": 10.24,
+          "w": 59.2, "h": 59.2,
           "density": 1,
           "friction": 0,
           "restitution": 1,
@@ -68,7 +68,7 @@
     {
       "entity": {
         "x": 0,
-        "y": -150,
+        "y": -300,
         "z": -400,
         "scale": 0.3,
         "r": 1, "g": 1, "b": 1, "alpha": 1,
@@ -104,7 +104,7 @@
       "fixtures": [
         {
           "x": 0, "y": 0,
-          "w": 800, "h": 42 ,
+          "w": 576, "h": 324 ,
           "density": 1,
           "friction": 0,
           "restitution":1,
@@ -197,7 +197,7 @@
         "velocity": { "x": -10,"y": 0 },
 
         "randp": {"max": { "x": 300,"y": 100 } ,"min":{ "x": 300,"y": -100 } },
-        "randv":{"max": { "x": 25,"y": 0 } ,"min":{ "x": -25,"y": 0 } },
+        "randv":{"max": { "x": 10,"y": 0 } ,"min":{ "x": 0,"y": 0 } },
         "id": "Obstacle1"
       },
 
@@ -275,7 +275,7 @@
         "velocity": { "x": -10,"y": 0 },
 
         "randp": {"max": { "x": 300,"y": 100 } ,"min":{ "x": 300,"y": -100 } },
-        "randv":{"max": { "x": 25,"y": 0 } ,"min":{ "x": -25,"y": 0 } },
+        "randv":{"max": { "x": 10,"y": 0 } ,"min":{ "x": 0,"y": 0 } },
         "id": "Obstacle1"
       },
 
@@ -360,7 +360,7 @@
   "textures": [
     {
       "id": "player",
-      "path": "../../Resources/5.png",
+      "path": "../../Resources/3.png",
       "depth": 5
     },
     {

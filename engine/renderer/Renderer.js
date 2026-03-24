@@ -136,8 +136,12 @@ export class Renderer {
           v.TextureCoordinates[1], v.theta, v.Pivot[0], v.Pivot[1], v.Offset[0],
           v.Offset[1]);
 
+
+
       count++;
     }
+
+
 
     for (let i = 0; i < count / 4; ++i) {
       this.AddIndexData();
@@ -315,7 +319,6 @@ export class Renderer {
       this.AddVertexData(text.Vertexes);
       text.clear();
     }
-
 
 
     this.gl.bindVertexArray(this.VAO);

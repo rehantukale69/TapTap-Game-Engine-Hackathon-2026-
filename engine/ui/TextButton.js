@@ -34,29 +34,43 @@ export class TextButton {
   -------------------------------------------------------
   */
   constructor(
-      textcontent, x, y, z, r, g, b, a, scale, slot, glyphMap, action = null) {
-    // Create text render object
-    this.RenderText =
-        new Text(textcontent, x, y, z, r, g, b, a, scale, slot, glyphMap);
+      textcontent, x, y, z, r, g, b, a, scale, slot, glyphMap, action = null,
+      randp) {
+    this.x = randp ?
+        (Math.floor(Math.random() * (randp.max.x - randp.min.x + 1)) +
+         randp.min.x) :
+        x;
+    this.y = randp ?
+        (Math.floor(Math.random() * (randp.max.y - randp.min.y + 1)) +
+         randp.min.y) :
+        y;
 
-    // Position of the button
-    this.x = x;
-    this.y = y;
     this.z = z;
 
-    // Button color
+
+    // Color tint
     this.r = r;
     this.g = g;
     this.b = b;
 
+    this.alpha = a;
+
+    // Rendering layer
+    this.slot = slot;
+
+    this.randp = randp;
+
     // Transparency
     this.alpha = a;
 
-    // Text scale
-    this.scale = scale;
-
-    // Rendering layer slot
+    // Rendering layer
     this.slot = slot;
+
+    // Create text render object
+    this.RenderText = new Text(
+        textcontent, this.x, this.y, this.z, this.r, this.g, this.b, this.alpha,
+        scale, this.slot, glyphMap);
+
 
     // Font glyph atlas
     this.glyphMap = glyphMap;

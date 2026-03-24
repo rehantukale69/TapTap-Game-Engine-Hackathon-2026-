@@ -40,7 +40,7 @@
           }
         ],
 
-        "bodytype": "dynamic",
+        "bodytype": "static",
         "id": "Player"
       },
 
@@ -61,7 +61,7 @@
     {
       "entity": {
         "x": 0,
-        "y": -150,
+        "y": -300,
         "z": -400,
         "scale": 0.3,
 
@@ -101,7 +101,7 @@
 
   "input": [
      {
-      "key": "keyA",
+      "key": "Enter",
       "condition": "pressed",
       "event": [
         {
@@ -116,7 +116,7 @@
 
     {
       "type": "TextButton",
-      "text": "Enter A",
+      "text": "Press Enter ",
 
       "x": 0,
       "y": -100,
@@ -155,7 +155,7 @@
   "textures": [
     {
       "id": "player",
-      "path": "../../Resources/5.png",
+      "path": "../../Resources/3.png",
       "depth": 5
     },
     {

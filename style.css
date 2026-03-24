@@ -2,3 +2,20 @@
   font-family: "MyFont";
   src: url("./fonts/MyFont.ttf") format("truetype");
 }
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+}
+
+#center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#glcanvas {
+  display: block;
+}

@@ -33,7 +33,7 @@ layout (location = 5) in vec2 pivot;
 layout (location = 6) in vec2 offset;
 
 out vec4 Color;
-out float Slot;
+flat out float Slot;
 out vec2 TextureCoordinates;
 uniform mat4 Projection;
 
@@ -60,28 +60,49 @@ const FragmentShaderData = `#version 300 es
 precision mediump float;
 precision mediump sampler2DArray;
 in vec4 Color;
-in float Slot;
+flat in float Slot;
 uniform sampler2DArray Textures;
 in vec2 TextureCoordinates;
 out vec4 fragColor;
 void main(){ 
- vec4 TexData = texture(Textures, vec3(TextureCoordinates, Slot));
-fragColor = TexData* Color; }
+ vec4 TexData = texture(Textures, vec3(TextureCoordinates, int(Slot)));
+fragColor  = TexData* Color; }
 `;
 
 window.onload = () => {
   const canvas = document.getElementById('glcanvas');
 
+  /* function resizeCanvas() {
+     const rect = canvas.getBoundingClientRect();
+     const dpr = window.devicePixelRatio || 1;
+
+     canvas.width = rect.width * dpr;
+     canvas.height = rect.height * dpr;
+
+     const gl = canvas.getContext('webgl2');
+     if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+   } */
+
   function resizeCanvas() {
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    const canvas = document.getElementById('glcanvas');
 
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    const screenW = window.innerWidth;
+    const screenH = window.innerHeight;
 
-    const gl = canvas.getContext('webgl2');
-    if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+    const aspect = 1920 / 1080;
+
+    let newW = screenW;
+    let newH = screenW / aspect;
+
+    if (newH < screenH) {
+      newH = screenH;
+      newW = screenH * aspect;
+    }
+
+    canvas.style.width = newW + 'px';
+    canvas.style.height = newH + 'px';
   }
+
 
   window.addEventListener('resize', resizeCanvas);
   resizeCanvas();
