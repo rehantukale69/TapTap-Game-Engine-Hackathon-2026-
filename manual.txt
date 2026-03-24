@@ -1,0 +1,196 @@
+# TapTap Engine – Simple Guide (How to Use & Play)
+
+## ▶️ How to run the project (important)
+
+### Step 1: Start a local server
+
+Do NOT just open the HTML file directly (textures won’t load properly).
+
+Use any one of these:
+
+**Option 1 (Python):**
+
+```bash
+python -m http.server
+```
+
+**Option 2 (VS Code):**
+
+* Install **Live Server extension**
+* Right click `index.html` → Open with Live Server
+
+---
+
+### Step 2: Open in browser
+
+Go to:
+
+```id="8l8z07"
+http://localhost:8000
+```
+
+(or whatever port your server shows)
+
+---
+
+
+### Step 3: Play the game
+
+Once loaded, the game should start automatically.
+
+---
+
+## 🎮 Controls (current prototype)
+
+* **← Left Arrow** → move player left
+* **→ Right Arrow** → move player right
+* **B key** → save current scene
+
+---
+
+## 🎯 What the current game does
+
+This is a simple **dodge game prototype**:
+
+* You control a player block
+* Obstacles move toward you
+* If you hit an obstacle → game over
+* If obstacle hits the wall → it respawns
+
+---
+
+## 📂 Where to make changes
+
+Most changes are done in the **scene JSON file**.
+
+You’ll find sections like:
+
+```json id="l8x9l0"
+"entities": [],
+"input": [],
+"ui": [],
+"textures": []
+```
+
+---
+
+## 🧩 Understanding the JSON (simple version)
+
+### 1. Entities → game objects
+
+This includes player, ground, obstacles.
+
+Example:
+
+```json id="c9sk1l"
+{
+  "id": "Player",
+  "x": 0,
+  "y": 40,
+  "slot": "player",
+  "bodytype": "dynamic"
+}
+```
+
+---
+
+### 2. Fixtures → collision boxes
+
+These define the shape used for physics:
+
+```json id="n5az9y"
+{
+  "w": 10,
+  "h": 10,
+  "issensor": false
+}
+```
+
+---
+
+### 3. Input → controls
+
+This connects keys to actions:
+
+```json id="w63n0d"
+{
+  "key": "ArrowLeft",
+  "condition": "pressed",
+  "event": [
+    {
+      "type": "MOVE_ENTITY",
+      "entityID": "Player",
+      "dx": -1,
+      "dy": 0
+    }
+  ]
+}
+```
+
+---
+
+### 4. Events → actual logic
+
+Everything happens through events.
+
+Examples:
+
+* Move object
+* Change state
+* Play sound
+* Spawn entity
+
+---
+
+### 5. Collision (maskbits)
+
+Used to trigger events when objects collide:
+
+```json id="h4e8v2"
+{
+  "mask": 1,
+  "event": [
+    { "type": "CHANGE_STATE", "state": "GameOver" }
+  ]
+}
+```
+
+---
+
+### 6. UI (buttons)
+
+Example:
+
+```json id="zy8d3f"
+{
+  "type": "TextureButton",
+  "slot": "ground",
+  "scale": 0.2
+}
+```
+
+---
+
+### 7. Textures
+
+```json id="j6p9fm"
+{
+  "id": "player",
+  "path": "../../Resources/3.png"
+}
+```
+
+This connects textures to objects.
+
+
+##  How everything connects
+
+Simple flow:
+
+```id="k4htv0"
+JSON → StateManager → Entity → Physics + Renderer → Screen
+```
+
+---
+
+

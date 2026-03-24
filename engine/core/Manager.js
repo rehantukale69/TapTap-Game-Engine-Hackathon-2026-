@@ -83,6 +83,10 @@ export class Manager {
         this.Engine.glyphMap, this.Engine, this.UI, this.audio);
 
     this.StateManager.SyncEngine();
+
+    this.StateManager.reset();
+    this.StateManager.LoadfomDisk('../../scenes/menu');
+    this.StateManager.SyncEngine();
   }
   update() {};
   Render() {
@@ -95,15 +99,15 @@ export class Manager {
 
     this.Simulation.step(this.fixedDT);
 
-    if (this.UI.isPressed('KeyA')) {
-      this.StateManager.reset();
-      this.StateManager.LoadfomDisk('../../scenes/game');
-      this.StateManager.SyncEngine();
-    }
+    /* if (this.UI.isPressed('KeyA')) {
+       this.StateManager.reset();
+       this.StateManager.LoadfomDisk('../../scenes/menu');
+       this.StateManager.SyncEngine();
+     }
 
-    /*if (this.UI.isPressed('KeyB')) {
-      this.StateManager.SaveToDisk('scene1');
-    } */
+     /*if (this.UI.isPressed('KeyB')) {
+       this.StateManager.SaveToDisk('scene1');
+     } */
 
 
 
