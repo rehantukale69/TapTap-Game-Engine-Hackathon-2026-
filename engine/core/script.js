@@ -66,24 +66,24 @@ in vec2 TextureCoordinates;
 out vec4 fragColor;
 void main(){ 
  vec4 TexData = texture(Textures, vec3(TextureCoordinates, int(Slot)));
-fragColor  = TexData* Color; }
+fragColor  = TexData *Color; }
 `;
 
 window.onload = () => {
   const canvas = document.getElementById('glcanvas');
 
-  /* function resizeCanvas() {
-     const rect = canvas.getBoundingClientRect();
-     const dpr = window.devicePixelRatio || 1;
-
-     canvas.width = rect.width * dpr;
-     canvas.height = rect.height * dpr;
-
-     const gl = canvas.getContext('webgl2');
-     if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
-   } */
-
   function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+
+    const gl = canvas.getContext('webgl2');
+    if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  /*function resizeCanvas() {
     const canvas = document.getElementById('glcanvas');
 
     const screenW = window.innerWidth;
@@ -99,9 +99,18 @@ window.onload = () => {
       newW = screenH * aspect;
     }
 
+    const dpr = window.devicePixelRatio || 1;
+
+
     canvas.style.width = newW + 'px';
     canvas.style.height = newH + 'px';
-  }
+
+    canvas.width = newW * dpr;
+    canvas.height = newH * dpr;
+
+    const gl = canvas.getContext('webgl2');
+    if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+  } */
 
 
   window.addEventListener('resize', resizeCanvas);

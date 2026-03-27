@@ -1,0 +1,216 @@
+{
+  "metadata": {
+    "name": "basic_scene",
+    "version": 1
+  },
+
+  "physics": [0, -10],
+
+  "camera": [0, 0, 0],
+
+  "entities": [
+
+    {
+      "entity": {
+        "x": 0,
+        "y": -300,
+        "z": -400,
+        "scale": 0.3,
+
+        "r": 1, "g": 1, "b": 1, "alpha": 1,
+
+        "slot": "ground",
+
+        "px": 0,
+        "py": 0,
+        "theta": 0,
+
+        "categorybits": 2,
+
+        "maskbits": [
+          { "mask": 4 }
+        ],
+
+        "bodytype": "static",
+        "id": "Ground"
+      },
+
+      "fixtures": [
+        {
+          "x": 0, "y": 0,
+          "w": 576,
+          "h": 324,
+          "density": 1,
+          "friction": 0.5,
+          "restitution": 0.2,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+    }
+
+  ],
+
+  "input": [
+
+     {
+      "key": "Escape",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "RESET_SCENE"
+        },
+        {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/menu"
+        }
+      ]
+    },
+     {
+      "key": "KeyA",
+      "condition": "pressed",
+      "event": [
+       {
+        "type":"SPAWN_ENTITY",
+        "data": {
+            "entity": {
+        "x": 0,
+        "y": 100,
+        "z": -400,
+        "scale": 0.01,
+        "r": 1, "g": 0, "b": 0, "alpha": 1,
+
+        "slot": "ground",
+
+        "px": 0,
+        "py": 0,
+
+        "theta": 0,
+
+        "categorybits": 4,
+
+        "maskbits": [
+          {
+            "mask": 2,
+            "event": []
+          },
+          {
+            "mask": 4,
+            "event": []
+          }
+          
+        ],
+
+        "bodytype": "dynamic",
+        
+        "gravity": 1,
+        "velocity": { "x": 0,"y": 0 },
+
+        "randp":null,
+        "randv":null,
+        "id": "block"
+      },
+
+      "fixtures": [
+        {
+          "x": 0, "y": 0,
+          "w": 19.2, "h": 10.8,
+          "density": 1,
+          "friction": 0,
+          "restitution": 0,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+        }
+       }
+      ]
+    }
+
+  ],
+
+  "ui": [
+
+    {
+      "type": "TextButton",
+      "text": "Back",
+
+      "x": -250,
+      "y": 125,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.1,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+          
+        {
+          "type": "RESET_SCENE"
+        },
+          {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/menu"
+        }
+        ]
+      },
+
+      "id": "exit"
+    },
+
+     {
+      "type": "TextButton",
+      "text": "Press A to Spawn Entitiy",
+
+      "x": 200,
+      "y": 125,
+      "z": -400,
+
+      "r": 1,
+      "g": 0,
+      "b": 0,
+
+      "alpha": 1,
+
+      "scale": 0.1,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+          
+        {
+          "type": "RESET_SCENE"
+        },
+          {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/menu"
+        }
+        ]
+      },
+
+      "id": "exit"
+    }
+  ],
+
+  "audio": [
+    
+  ],
+
+  "textures": [
+    
+    {
+      "id": "ground",
+      "path": "../../Resources/textures/block.png",
+      "depth": 2
+    }
+    
+  ]
+}

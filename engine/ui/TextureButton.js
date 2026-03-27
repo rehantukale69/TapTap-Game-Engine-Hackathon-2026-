@@ -35,7 +35,7 @@ export class TextureButton {
   */
   constructor(
       x, y, z, w, h, r, g, b, alpha, slot, px, py, theta, action = null, randp,
-      scale, texturesize) {
+      scale, texturesize, canvas, id) {
     // Position
     this.x = randp ?
         (Math.floor(Math.random() * (randp.max.x - randp.min.x + 1)) +
@@ -65,13 +65,15 @@ export class TextureButton {
     // Rendering layer
     this.slot = slot;
 
+    this.ID = id;
+
     this.texturesize = texturesize;
     this.scale = scale;
 
     // Create render object representing the textured UI quad
     this.RenderObject = new Object(
-        this.x, this.y, this.z, this.w, this.h, this.r, this.g, this.b,
-        this.alpha, this.slot, px, py, theta, this.texturesize);
+        this.x, this.y, z, this.w, this.h, this.r, this.g, this.b, this.alpha,
+        this.slot, px, py, theta, this.texturesize);
 
 
 
@@ -83,6 +85,8 @@ export class TextureButton {
 
     // Flag indicating whether button was clicked this frame
     this.MouseClicked = false;
+
+    this.glcanvas = canvas;
   }
 
   /*
@@ -102,12 +106,26 @@ export class TextureButton {
   */
   isInside(mx, my) {
     // Compute half width and height for bounding box
-    let halfW = this.w * 0.5 * 3.25;
-    let halfH = this.h * 0.5 * 3.25;
+    let rect = this.glcanvas.getBoundingClientRect();
+
+    let f = 1 / Math.tan((45 * Math.PI / 180) / 2);
+    let scale = f / Math.abs(this.z);
+
+    let ndcX = (this.x * scale) * (rect.height / rect.width);
+    let ndcY = (this.y * scale);
+
+    // Convert to pixels
+    let cx = (ndcX) * 0.5 * rect.width;
+    let cy = (ndcY) * 0.5 * rect.height;
+
+
+    let halfW = this.w * 0.25 * scale * (rect.height / rect.width) * rect.width;
+    let halfH = this.h * 0.25 * scale * rect.height;
+
 
     return (
-        mx >= this.x - halfW && mx <= this.x + halfW && my >= this.y - halfH &&
-        my <= this.y + halfH);
+        mx >= cx - halfW && mx <= cx + halfW && my >= cy - halfH &&
+        my <= cy + halfH);
   }
 
   /*

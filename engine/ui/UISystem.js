@@ -69,6 +69,8 @@ export class UISystem {
       const scaleX = this.glcanvas.width / rect.width;
       const scaleY = this.glcanvas.height / rect.height;
 
+
+
       this.mouseX = (e.clientX - rect.left) * scaleX;
       this.mouseY = (e.clientY - rect.top) * scaleY;
     });

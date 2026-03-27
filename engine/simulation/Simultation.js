@@ -33,6 +33,8 @@ export class Simulation {
 
     // Queue used to safely remove bodies after physics step
     this.destroyQueue = [];
+
+    this.pause = false;
   }
 
   /*
@@ -49,19 +51,21 @@ export class Simulation {
   -------------------------------------------------------
   */
   step(dt) {
-    const velocityIterations = 8;
-    const positionIterations = 3;
+    if (!this.pause) {
+      const velocityIterations = 8;
+      const positionIterations = 3;
 
-    // Advance physics simulation
-    this.world.step(dt, velocityIterations, positionIterations);
+      // Advance physics simulation
+      this.world.step(dt, velocityIterations, positionIterations);
 
-    // Safely destroy bodies queued for deletion
-    for (const body of this.destroyQueue) {
-      this.world.destroyBody(body);
+      // Safely destroy bodies queued for deletion
+      for (const body of this.destroyQueue) {
+        this.world.destroyBody(body);
+      }
+
+      // Clear destruction queue
+      this.destroyQueue.length = 0;
     }
-
-    // Clear destruction queue
-    this.destroyQueue.length = 0;
   }
 
   /*

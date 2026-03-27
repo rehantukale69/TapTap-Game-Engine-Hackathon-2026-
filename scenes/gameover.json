@@ -1,0 +1,182 @@
+{
+  "metadata": {
+    "name": "flappy_dodge_scene",
+    "version": 1
+  },
+
+  "physics": [0, -10],
+
+  "camera": [0, 0, 0],
+
+  "entities": [
+
+      {
+      "entity": {
+        "x": 0,
+        "y": -300,
+        "z": -400,
+        "scale": 0.3,
+        "r": 1, "g": 1, "b": 1, "alpha": 1,
+
+        "slot": "ground",
+
+        "px": 0,
+        "py": 0,
+
+        "theta": 0,
+
+        "categorybits": 2,
+
+        "maskbits": [
+          { "mask": 1,
+          "event": [
+      ]
+          }
+        ],
+
+        "bodytype": "static",
+        "randp": null,
+        "randv":null,
+        "id": "Ground"
+      },
+
+      "fixtures": [
+        {
+          "x": 0, "y": 0,
+          "w": 576, "h": 324 ,
+          "density": 1,
+          "friction": 0,
+          "restitution":1,
+          "issensor": false,
+          "theta": 0
+        }
+      ]
+    }
+    
+  ],
+
+  "input": [
+    {
+      "key": "Enter",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "RESET_SCENE"
+        },
+        {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/menu"
+        }
+      ]
+    }
+  ],
+
+  "ui": [
+
+    {
+      "type": "TextButton",
+      "text": "GAME OVER",
+
+      "x": 0,
+      "y": 0,
+      "z": -400,
+
+      "r": 1,
+      "g": 0,
+      "b": 0,
+
+      "alpha": 1,
+
+      "scale": 0.3,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+          
+        ]
+      },
+
+      "id": "over"
+    },
+
+    {
+      "type": "TextButton",
+      "text": "Play Again",
+
+      "x": 0,
+      "y": -50,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.1,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+        {
+          "type": "RESET_SCENE"
+        },
+         {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/game"
+        },
+        {
+          "type": "PAUSE_OFF"
+        }
+        ]
+      },
+
+      "id":"play"
+    },
+    {
+      "type": "TextButton",
+      "text": "Menu",
+
+      "x": 0,
+      "y": -100,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.1,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+        {
+          "type": "RESET_SCENE"
+        },
+          {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/menu"
+        },
+        {
+          "type": "PAUSE_OFF"
+        }
+        ]
+      },
+
+      "id":"menu"
+    }
+
+   
+  ],
+
+  "audio": [
+  ],
+
+  "textures": [
+  ]
+}

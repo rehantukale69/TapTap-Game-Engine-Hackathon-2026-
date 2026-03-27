@@ -35,7 +35,7 @@ export class TextButton {
   */
   constructor(
       textcontent, x, y, z, r, g, b, a, scale, slot, glyphMap, action = null,
-      randp) {
+      randp, canvas, id) {
     this.x = randp ?
         (Math.floor(Math.random() * (randp.max.x - randp.min.x + 1)) +
          randp.min.x) :
@@ -66,10 +66,13 @@ export class TextButton {
     // Rendering layer
     this.slot = slot;
 
+    this.ID = id;
+
     // Create text render object
     this.RenderText = new Text(
         textcontent, this.x, this.y, this.z, this.r, this.g, this.b, this.alpha,
         scale, this.slot, glyphMap);
+
 
 
     // Font glyph atlas
@@ -80,6 +83,8 @@ export class TextButton {
 
     // Flag that becomes true when button is clicked
     this.MouseClicked = false;
+
+    this.glcanvas = canvas;
   }
 
   /*
@@ -100,12 +105,29 @@ export class TextButton {
   isInside(mx, my) {
     // Compute half width and height of button area
     // (scaled based on rendered text size)
-    let halfW = this.RenderText.width * 0.5 * 3.25;
-    let halfH = this.RenderText.height * 0.5 * 3.25;
+
+
+    let rect = this.glcanvas.getBoundingClientRect();
+
+    let f = 1 / Math.tan((45 * Math.PI / 180) / 2);
+    let scale = f / Math.abs(this.z);
+
+    let ndcX = (this.x * scale) * (rect.height / rect.width);
+    let ndcY = (this.y * scale);
+
+    // Convert to pixels
+    let cx = (ndcX) * 0.5 * rect.width;
+    let cy = (ndcY) * 0.5 * rect.height;
+
+
+    let halfW = this.RenderText.width * 0.25 * scale *
+        (rect.height / rect.width) * rect.width;
+    let halfH = this.RenderText.height * 0.25 * scale * rect.height;
+
 
     return (
-        mx >= this.x - halfW && mx <= this.x + halfW && my >= this.y - halfH &&
-        my <= this.y + halfH);
+        mx >= cx - halfW && mx <= cx + halfW && my >= cy - halfH &&
+        my <= cy + halfH);
   }
 
   /*

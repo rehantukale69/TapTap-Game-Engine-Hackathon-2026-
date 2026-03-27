@@ -95,9 +95,10 @@ export class Entity {
         this.World.createBoxBody(this.x / SCALE, this.y / SCALE, bodytype);
 
     if (bodytype == 'kinematic') {
-      this.body.setLinearVelocity(
-          planck.Vec2(this.velocity.x, this.velocity.y));
+      this.body.setLinearVelocity({x: this.velocity.x, y: this.velocity.y});
     }
+
+
 
     this.body.setGravityScale(this.gravity ?? 1);
 

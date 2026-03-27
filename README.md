@@ -1,10 +1,55 @@
-# 🚀 TaPTaP Game Engine Hackathon Submission
+# 🚀 TaPTaP Game Engine – Hackathon Submission
+
+---
 
 ## 📌 Project Overview
 
-This project is a custom-built **WebGL-based game engine** designed to demonstrate core game engine architecture along with a functional gameplay prototype.
+TaPTaP is a custom-built **WebGL-based game engine** designed to demonstrate core game engine architecture along with a functional gameplay prototype.
 
-The engine focuses on modularity, real-time rendering, and interactive systems, culminating in a playable demo where users can control a player entity and dodge obstacles.
+The engine is built with a strong focus on:
+
+* ⚡ Real-time rendering
+* 🧩 Modular architecture
+* 📦 Data-driven design (JSON-based scenes)
+* 🎮 Interactive gameplay systems
+
+The project culminates in a fully playable prototype that showcases how multiple engine systems work together seamlessly.
+
+---
+
+## ✨ Key Features
+
+* ⚡ Fully **event-driven architecture**
+* 🧩 **Modular system design**
+* 📦 **JSON-driven scenes (no hardcoded logic)**
+* 🎨 WebGL2 **GPU rendering pipeline**
+* ⚙️ Real-time **physics simulation (Planck.js)**
+* 🖱️ Interactive **UI system (Text + Texture buttons)**
+* 🔊 Integrated **audio system with toggle support**
+* 🔁 Dynamic **scene switching**
+* 🎮 Multiple gameplay scenarios
+
+---
+
+## 🏗️ Engine Architecture
+
+The engine follows a **modular and event-driven architecture**.
+
+### Core Systems:
+
+* 🎨 Renderer (WebGL2)
+* ⚙️ Simulation (Physics – Planck.js)
+* 🧩 UI System
+* 🔊 Audio System
+* 🧠 State Manager (central controller)
+
+All systems communicate through an **event queue**, ensuring:
+
+* Loose coupling
+* High scalability
+* Easy feature extension
+
+👉 Game logic is entirely controlled via **JSON scene files**, making the engine fully data-driven.
 
 ---
 
@@ -12,76 +57,121 @@ The engine focuses on modularity, real-time rendering, and interactive systems, 
 
 ### 🧩 1. Engine Blueprint
 
-This phase focused on planning and designing the foundation of the engine.
+* Designed system architecture
+* Planned rendering pipeline
+* Defined entity structure
+* Organized modular folder structure
 
-Key work:
-
-* Defined overall **engine architecture**
-* Designed **Entity-Component structure**
-* Planned **rendering pipeline**
-* Established folder structure and modular system design
-* Identified core systems:
-
-  * Rendering System
-  * Input System
-  * Scene Management
-  * Game Loop
-
-Outcome:
-A clear blueprint that guided structured and scalable development.
+**Outcome:** Structured and scalable engine design
 
 ---
 
 ### ⚙️ 2. Core Engine Proof
 
-This phase validated that the engine systems actually work together.
+* Implemented entity system
+* Built rendering pipeline
+* Integrated input system
+* Created update loop
 
-Implemented:
-
-* Functional **Entity system**
-* Basic **component handling**
-* Working **rendering pipeline**
-* Real-time **input handling**
-* Scene initialization and update loop
-
-Outcome:
-A working engine core capable of:
-
-* Rendering entities
-* Handling user input
-* Updating game state dynamically
+**Outcome:** Functional engine core
 
 ---
 
 ### 🎮 3. Prototype Build
 
-This phase demonstrates the engine through a playable game.
+* Player movement system
+* Obstacle spawning
+* Collision detection
+* Gameplay loop
 
-Gameplay features:
+**Outcome:** Fully playable game prototype
 
-* Press **Enter** to start the game
-* Player can move **left and right**
-* Obstacles spawn and move toward the player
-* Collision/dodge mechanics implemented
-* Continuous gameplay loop
+---
 
-Objective:
+## 🎮 Game Scenarios
 
-* Avoid obstacles as long as possible
-* Demonstrates real-time input + rendering + physics interaction
+### 1. Endless Runner
 
-Outcome:
-A fully playable prototype built on top of the custom engine.
+* Player moves left/right
+* Obstacles spawn dynamically
+* Collision triggers game over
+
+---
+
+### 2. Physics Sandbox
+
+* Spawn objects dynamically
+* Real-time physics interaction
+* Demonstrates engine flexibility
+
+---
+
+### 3. UI-Based Scenes
+
+* Menu Scene
+* Pause System
+* Game Over Screen
+
+---
+
+## ⚡ Event System
+
+The engine operates using a centralized **event-driven system**.
+
+### Example Events:
+
+* MOVE_ENTITY
+* APPLY_FORCE
+* SET_VELOCITY
+* CHANGE_STATE
+* LOAD_SCENE
+* PLAY_AUDIO
+* REMOVE_UI
+* TOGGLE_AUDIO
+
+All interactions (input, UI, physics) generate events processed by the **State Manager**.
+
+### Benefits:
+
+* Clean logic separation
+* High flexibility
+* Easy debugging and scaling
+
+---
+
+## 📂 Project Structure
+
+```
+engine/
+  core/
+  renderer/
+  simulation/
+  state/
+  ui/
+  audio/
+
+scenes/
+  menu.json
+  game.json
+  pause.json
+  sandbox.json
+
+Resources/
+index.html
+script.js
+```
 
 ---
 
 ## 🎮 Controls
 
-| Action     | Key             |
-| ---------- | --------------- |
-| Start Game | Enter           |
-| Move Left  | Left Arrow / A  |
-| Move Right | Right Arrow / D |
+| Action     | Key         |
+| ---------- | ----------- |
+| Start Game | Enter       |
+| Move Left  | ← Arrow / A |
+| Move Right | → Arrow / D |
+| Save Scene | B           |
+| Pause      | ESC         |
 
 ---
 
@@ -89,59 +179,74 @@ A fully playable prototype built on top of the custom engine.
 
 ### 🔧 Requirements
 
-* A modern web browser (Chrome recommended)
-* Basic local server (optional but recommended)
+* Modern browser (Chrome recommended)
+* Local server (recommended)
 
 ---
 
-### 🚀 Steps to Run
+### 🚀 Steps
 
-#### Option 1: Direct Run
+#### Option 1: Local Server (Recommended)
 
-1. Download or clone the repository:
+```bash
+python -m http.server
+```
 
-   ```bash
-   git clone <your-repo-link>
-   ```
-2. Open the project folder
-3. Open `index.html` in your browser
+OR
 
----
+```bash
+npx serve
+```
 
-#### Option 2: Using Local Server (Recommended)
+Then open:
 
-1. Navigate to project folder:
-
-   ```bash
-   cd your-project
-   ```
-2. Run a local server:
-
-   ```bash
-   npx serve
-   ```
-
-   OR
-
-   ```bash
-   python -m http.server
-   ```
-3. Open the provided localhost URL in browser
+```
+http://localhost:8000
+```
 
 ---
 
-## 🧠 How to Use the Engine
+⚠️ Important:
+Do NOT open HTML directly — textures may not load correctly.
 
-* Launch the project
-* Press **Enter** to start the game
-* Use movement keys to control the player
-* Observe how:
+---
 
-  * entities are rendered
-  * input affects gameplay
-  * systems interact in real-time
+## 🧠 How the Engine Works
 
-This demonstrates the **engine’s architecture in action**.
+Flow:
+
+```
+Input → Event → StateManager → Systems → Render
+```
+
+* Input generates events
+* StateManager processes events
+* Systems update (physics, UI, etc.)
+* Renderer draws final frame
+
+---
+
+## 🧠 Technical Highlights
+
+* Custom **projection-based rendering**
+* WebGL2 shader pipeline
+* Texture atlas system
+* Physics-render synchronization
+* UI bounding box detection
+* Event queue architecture
+
+---
+
+## 🎥 Demo Video
+
+👉 (Add your video link here)
+
+Showcase:
+
+* Gameplay
+* UI interaction
+* Scene switching
+* Physics simulation
 
 ---
 
@@ -149,29 +254,45 @@ This demonstrates the **engine’s architecture in action**.
 
 One intermediate checkpoint was not submitted on the platform.
 
-However, the full development lifecycle is clearly represented through:
+However, development progress is clearly demonstrated via:
 
-* Structured phases in this README
-* Git commit history showing progressive development
-* Final working prototype
+* Structured implementation phases
+* Git commit history
+* Fully functional final build
 
 ---
 
 ## 🎯 Final Deliverable
 
-A functional game engine with:
+A **modular game engine** featuring:
 
-* Modular architecture
-* Core engine systems implemented
-* Playable prototype demonstrating real-time interaction
+* Core engine systems
+* Event-driven architecture
+* JSON-based scene system
+* Playable gameplay prototype
 
 ---
 
 ## 🚀 Future Improvements
 
-* Advanced physics system
-* Level design support
-* UI editor enhancements
+* Visual editor for scene creation
+* Advanced rendering (lighting, particles)
 * Performance optimization
+* AI-based gameplay logic
+* Multiplayer support
+
+---
+
+## 🏁 Conclusion
+
+TaPTaP is not just a game — it is a **mini game engine** demonstrating:
+
+* Clean architecture
+* Real-time systems integration
+* Scalable design
+
+---
+
+🔥 **Built with a focus on engine design, not just gameplay**
 
 ---

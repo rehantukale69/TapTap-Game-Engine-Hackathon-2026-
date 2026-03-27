@@ -15,7 +15,7 @@
         "x": 0,
         "y": 40,
         "z": -400,
-        "scale": 0.1,
+        "scale": 0.05,
 
         "r": 1, "g": 1, "b": 1, "alpha": 1,
 
@@ -30,12 +30,7 @@
         "maskbits": [
           { "mask": 2,
             "event": [
-              {
-                "type": "PLAY_AUDIO",
-                "audio": "jump",
-                "loop": false,
-                "volume": 0.75
-              }
+              
             ]
           }
         ],
@@ -105,6 +100,9 @@
       "condition": "pressed",
       "event": [
         {
+          "type": "RESET_SCENE"
+        },
+        {
           "type": "LOAD_SCENE",
           "scene": "../../scenes/game"
         }
@@ -116,7 +114,40 @@
 
     {
       "type": "TextButton",
-      "text": "Press Enter ",
+      "text": "Play",
+
+      "x": 0,
+      "y": -50,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.2,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+          
+        {
+          "type": "RESET_SCENE"
+        },
+          {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/game"
+        }
+        ]
+      },
+
+      "id": "play"
+    },
+    {
+      "type": "TextButton",
+      "text": "SandBox",
 
       "x": 0,
       "y": -100,
@@ -128,40 +159,89 @@
 
       "alpha": 1,
 
-      "scale": 0.3,
+      "scale": 0.2,
 
       "slot": 0,
 
       "action": {
         "event": [
+          
+        {
+          "type": "RESET_SCENE"
+        },
           {
-            "type": "MOVE_ENTITY",
-            "entityID": "Player",
-            "dx": 0.5,
-            "dy": 0
-          }
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/sandbox"
+        }
         ]
-      }
+      },
+
+      "id": "extra"
+    },
+
+    {
+      "type": "TextureButton",
+
+      "x": 250,
+      "y": 120,
+      "z": -400,
+
+      "w": 80,
+      "h": 80,
+
+      "r": 1,
+      "g": 1,
+      "b": 1,
+      "alpha": 1,
+
+      "slot": "audio_on",
+      "scale": 0.05,
+
+      "px": 0,
+      "py": 0,
+
+      "theta": 0,
+
+      "randp": null,
+
+      "action": {
+        "event": [
+         
+        {
+          "type": "TOGGLE_AUDIO",
+          "uiID":"audio"
+        }
+        ]
+      },
+
+      "id":"audio"
     }
   ],
 
   "audio": [
-    {
-      "id": "jump",
-      "path": "../../Resources/jump.mp3"
-    }
   ],
 
   "textures": [
+
     {
       "id": "player",
-      "path": "../../Resources/3.png",
-      "depth": 5
+      "path": "../../Resources/textures/bird.png",
+      "depth": 1
     },
     {
       "id": "ground",
-      "path": "../../Resources/2.png",
+      "path": "../../Resources/textures/block.png",
       "depth": 2
+    },
+    {
+      "id": "audio_off",
+      "path": "../../Resources/textures/off.png",
+      "depth":3
+    },
+    {
+      "id": "audio_on",
+      "path": "../../Resources/textures/on.png",
+      "depth": 4
     }
   ]
 }

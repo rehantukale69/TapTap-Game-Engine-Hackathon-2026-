@@ -28,28 +28,6 @@ export class Manager {
 
     this.Engine.InitializeTextures();
     this.Engine.InitializeFont();
-
-    /* this.Engine.LoadTexture('../../Resources/1.png', 1);
-     this.Engine.LoadTexture('../../Resources/2.png', 2);
-     this.Engine.LoadTexture('../../Resources/3.png', 3);
-
-
-
-     /* this.Shot = new TextButton(
-          'Kya Bolti Public', 0, 0, -400, 1.0, 1.0, 1.0, 1.0, 0.3, 0,
-          this.Engine.glyphMap, {
-            event: [
-              {type: 'MOVE_ENTITY', entityID: 'Player', dx: 0.05, dy: 0},
-              {type: 'PLAY_AUDIO', audio: 'bgm', loop: 'false', volume: '0.75'}
-            ]
-          });
-
-
-      this.Engine.AddText(this.Shot.RenderText);
-
-      this.d = new TextureButton(
-          0, 0, -400, 200, 200, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0);
-      // this.Engine.AddObject(this.d.RenderObject); */
   };
 
   InitializeUISystem() {
@@ -58,19 +36,6 @@ export class Manager {
   InitializeSImultaion() {
     this.Simulation = new Simulation(this.gravity);
     this.World = this.Simulation.ReturnWorld();
-
-
-    /*this.Entity1 = new Entity(
-        0, 0, -400, 50, 50, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0, this.Simulation,
-        'dynamic', 'Player');
-    console.log(this.Entity1.AddFixture(0, 0, 50, 50, 1, 1, 1, false, 0.0));
-    this.Engine.AddObject(this.Entity1.RenderObject);
-
-    this.Entity2 = new Entity(
-        0, -100, -400, 50, 50, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0,
-        this.Simulation, 'static', 'Ground');
-    console.log(this.Entity2.AddFixture(0, 0, 50, 50, 1, 1, 1, false, 0.0));
-    this.Engine.AddObject(this.Entity2.RenderObject); */
   };
 
   InitializeSoundSystem() {
@@ -96,25 +61,11 @@ export class Manager {
     let pos = this.UI.getMousePos();
 
 
-
     this.Simulation.step(this.fixedDT);
-
-    /* if (this.UI.isPressed('KeyA')) {
-       this.StateManager.reset();
-       this.StateManager.LoadfomDisk('../../scenes/menu');
-       this.StateManager.SyncEngine();
-     }
-
-     /*if (this.UI.isPressed('KeyB')) {
-       this.StateManager.SaveToDisk('scene1');
-     } */
-
-
 
     this.StateManager.update(pos.x, pos.y, this.UI.mousePressed);
 
     this.UI.endFrame();
-
 
 
     this.Engine.Render();

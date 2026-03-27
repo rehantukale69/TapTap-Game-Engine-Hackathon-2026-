@@ -1,0 +1,166 @@
+{
+  "metadata": {
+    "name": "flappy_dodge_scene",
+    "version": 1
+  },
+
+  "physics": [0, -10],
+
+  "camera": [0, 0, 0],
+
+  "entities": [
+
+     
+    
+  ],
+
+  "input": [
+    {
+      "key": "Esc",
+      "condition": "pressed",
+      "event": [
+        {
+          "type": "PAUSE_OFF"
+        },
+        {
+          "type": "REMOVE_UI",
+          "uiID": "continue"
+        },
+        {
+          "type": "REMOVE_UI",
+          "uiID": "restart"
+        },
+        {
+          "type": "REMOVE_UI",
+          "uiID": "exit"
+        }
+      ]
+    }
+  ],
+
+  "ui": [
+
+    {
+      "type": "TextButton",
+      "text": "Continue",
+
+      "x": 0,
+      "y": 0,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.1,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+          
+        {
+          "type": "REMOVE_UI",
+          "uiID": "continue"
+        },
+        {
+          "type": "REMOVE_UI",
+          "uiID": "restart"
+        },
+        {
+          "type": "REMOVE_UI",
+          "uiID": "exit"
+        },
+        {
+          "type": "PAUSE_OFF"
+        }
+        ]
+      },
+
+      "id": "continue"
+    },
+
+    {
+      "type": "TextButton",
+      "text": "Restart",
+
+      "x": 0,
+      "y": -25,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.1,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+        {
+          "type": "RESET_SCENE"
+        },
+         {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/game"
+        },
+        {
+          "type": "PAUSE_OFF"
+        }
+        ]
+      }
+      ,
+
+      "id": "restart"
+    },
+    {
+      "type": "TextButton",
+      "text": "Menu",
+
+      "x": 0,
+      "y": -50,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.1,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+        {
+          "type": "RESET_SCENE"
+        },
+          {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/menu"
+        },
+        {
+          "type": "PAUSE_OFF"
+        }
+        ]
+      }
+      ,
+
+      "id": "exit"
+    }
+
+   
+  ],
+
+  "audio": [
+  ],
+
+  "textures": [
+  ]
+}

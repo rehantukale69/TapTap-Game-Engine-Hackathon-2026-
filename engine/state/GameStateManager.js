@@ -40,6 +40,8 @@ export class StateManager {
     // UI elements (buttons etc.)
     this.UI = [];
 
+    this.UIMap = new Map();
+
     // Physics gravity settings
     this.gravity = gravity;
 
@@ -71,6 +73,8 @@ export class StateManager {
     this.gameState = 'Test';
 
     this.Masks = [];
+
+    this.audioEnabled = true;
 
     this.ManageCollisions();
   }
@@ -191,10 +195,6 @@ export class StateManager {
       maskMap[mask.mask] = mask.event || [];
     }
 
-    // if (e.bodytype === 'kinematic' && e.velocity == ) {
-
-    // console.log(this.Engine.TextureSizes);
-    // console.log(Array.from(this.Engine.TextureSizes));
 
     const entity = new Entity(
 
@@ -277,7 +277,9 @@ export class StateManager {
       slot: button.slot,
 
       action: this.SerializeButtonAction(button.action),
-      randp: button.randp
+      randp: button.randp,
+
+      id: button.ID,
     };
   }
 
@@ -288,7 +290,6 @@ export class StateManager {
   */
   SerializeTextureButton(button) {
     return {
-
       type: 'TextureButton',
 
       x: button.x,
@@ -314,6 +315,8 @@ export class StateManager {
       action: this.SerializeButtonAction(button.action),
       randp: button.randp,
       scale: button.scale,
+
+      id: button.ID,
     };
   }
 
@@ -409,7 +412,7 @@ export class StateManager {
       const action = ui.action ?? null;
 
       if (ui.type === 'TextButton') {
-        this.UI.push(new TextButton(
+        this.AddUI(new TextButton(
 
             ui.text, ui.x, ui.y, ui.z,
 
@@ -423,11 +426,11 @@ export class StateManager {
 
             this.glyphMap,
 
-            action, ui.randp));
+            action, ui.randp, this.Engine.glcanvas, ui.id));
       }
 
       else if (ui.type === 'TextureButton') {
-        this.UI.push(new TextureButton(
+        this.AddUI(new TextureButton(
 
             ui.x, ui.y, ui.z,
 
@@ -437,17 +440,16 @@ export class StateManager {
 
             ui.alpha,
 
-            ui.slot,
+            this.Engine.TextureMap[ui.slot],
 
             ui.px, ui.py,
 
             ui.theta,
 
-            action, ui.randp, ui.scale, this.Engine.TextureSizes[ui.slot]));
+            action, ui.randp, ui.scale, this.Engine.TextureSizes[ui.slot],
+            this.Engine.glcanvas, ui.id));
       }
     }
-
-    console.log(this.UI);
   }
 
   LoadMasks(data) {
@@ -490,12 +492,17 @@ export class StateManager {
   -------------------------------------------------------
   */
   LoadInputEvents(inputs) {
-    if (!Array.isArray(inputs)) {
-      this.InputEvents = [];
-      return;
-    }
+    if (!Array.isArray(inputs)) return;
 
-    this.InputEvents = inputs;
+    for (let input of inputs) {
+      if (!input.key || !input.condition || !Array.isArray(input.event)) {
+        console.warn('Invalid input event:', input);
+        continue;
+      }
+
+      this.InputEvents.push(
+          {key: input.key, condition: input.condition, event: input.event});
+    }
   }
 
   /*
@@ -503,8 +510,6 @@ export class StateManager {
   */
   AddInputEvent(inputevent) {
     this.InputEvents.push(inputevent);
-
-    // console.log(inputevent);
   }
 
   /*
@@ -522,8 +527,10 @@ export class StateManager {
     this.reset();
 
     this.EntityMap.clear();
+    this.UIMap.clear();
 
-    this.LoadfromLocal(this.gameState);
+
+    this.LoadfromDisk(this.gameState);
   }
 
   /*
@@ -553,6 +560,11 @@ export class StateManager {
     }
 
     return data;
+  }
+
+
+  EmptyInputEvents() {
+    this.InputEvents = [];
   }
 
   /*
@@ -602,7 +614,7 @@ export class StateManager {
       console.warn('Scene version mismatch');
     }
 
-    // console.log(data);
+
 
     this.gravity = data.physics;
 
@@ -673,6 +685,21 @@ export class StateManager {
     this.Engine.RemoveObj(entity.RenderObject);
   }
 
+  RemoveUI(ui) {
+    const index = this.UI.indexOf(ui);
+
+
+    if (index !== -1) {
+      this.UI.splice(index, 1);
+    }
+
+    if (ui.type == 'TextButton') {
+      this.Engine.RemoveText(ui.RenderText);
+    } else if (ui.type == 'TextureButton') {
+      this.Engine.RemoveObj(ui.RenderObject);
+    }
+  }
+
   /*
   -------------------------------------------------------
   Exports scene to JSON file for download
@@ -718,6 +745,7 @@ export class StateManager {
   */
   HandleEvent(event) {
     const e = event.entityID ? this.EntityMap.get(event.entityID) : null;
+    const u = event.uiID ? this.UIMap.get(event.uiID) : null;
 
     switch (event.type) {
       case 'MOVE_ENTITY':
@@ -737,7 +765,6 @@ export class StateManager {
 
         e.body.setTransform(
             this.simulationWorld.pl.Vec2(event.x, event.y), e.body.getAngle());
-        console.log(event);
 
         break;
 
@@ -760,7 +787,6 @@ export class StateManager {
       case 'SPAWN_ENTITY':
 
         this.AddEntity(this.LoadEntity(event.data));
-        console.log(event.data);
         this.SyncEngine();
 
         break;
@@ -814,9 +840,13 @@ export class StateManager {
 
         break;
 
-      case 'LOAD_SCENE':
+      case 'RESET_SCENE':
 
         this.reset();
+        break;
+
+      case 'LOAD_SCENE':
+
         this.LoadfomDisk(event.scene);
         this.SyncEngine();
 
@@ -830,8 +860,58 @@ export class StateManager {
 
       case 'PLAY_AUDIO':
 
-        this.audio.playSound(event.audio, event.loop, event.volume);
+        if (this.audioEnabled) {
+          this.audio.playSound(event.audio, event.loop, event.volume);
+        }
 
+        break;
+
+      case 'SYNC_ENGINE':
+
+        this.SyncEngine();
+        break;
+
+      case 'REMOVE_UI':
+        if (!u) return;
+
+        this.RemoveUI(u);
+
+        break;
+
+      case 'PAUSE_OFF':
+        this.simulationWorld.pause = false;
+        break;
+
+      case 'PAUSE_ON':
+        this.simulationWorld.pause = true;
+        break;
+
+      case 'EMPTY_INPUT':
+        this.EmptyInputEvents();
+        break;
+
+      case 'ADD_SCORE':
+        let score = parseInt(u.RenderText.text.split(':')[1].trim());
+        score += 1;
+        u.RenderText.text = 'Score:' + score;
+        break;
+
+      case 'RESET_SCORE':
+        u.RenderText.text = 'Score:0';
+        break;
+
+      case 'TOGGLE_AUDIO':
+
+        this.audioEnabled = !this.audioEnabled;
+
+        if (u && u.RenderObject) {
+          let newSlot = this.audioEnabled ? 'audio_on' : 'audio_off';
+
+          u.RenderObject.slot = this.Engine.TextureMap[newSlot];
+          u.slot = newSlot;
+
+          u.RenderObject.update();
+        }
         break;
     }
   }
@@ -889,8 +969,6 @@ export class StateManager {
           }
         }
       }
-
-      // console.log(eA.MasksMap, eB.MasksMap);
     });
   }
 
@@ -900,6 +978,8 @@ export class StateManager {
     for (let e of this.Entities) {
       e.update();
     }
+
+
 
     // Update UI elements
     for (let ui of this.UI) {
@@ -912,6 +992,7 @@ export class StateManager {
         };
       }
     }
+
 
     // Process input bindings
     for (let input of (this.InputEvents || [])) {
@@ -966,10 +1047,6 @@ export class StateManager {
   Adds entity to the scene and map
   */
   AddEntity(entity) {
-    if (entity.ID == 'Obstacle1') {
-      entity.body.setLinearVelocity({x: -10, y: 0});
-    }
-
     this.Entities.push(entity);
 
     this.EntityMap.set(entity.ID, entity);
@@ -980,5 +1057,6 @@ export class StateManager {
   */
   AddUI(UI) {
     this.UI.push(UI);
+    this.UIMap.set(UI.ID, UI);
   }
 }

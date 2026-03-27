@@ -15,7 +15,7 @@
         "x": 0,
         "y": 0,
         "z": -400,
-        "scale": 0.05,
+        "scale": 0.01,
         "r": 1, "g": 1, "b": 1, "alpha": 1,
 
         "slot": "player",
@@ -29,6 +29,7 @@
 
         "maskbits": [
           { "mask": 2 },
+          { "mask": 8 },
           { "mask": 4,
            "event": [
             
@@ -36,11 +37,22 @@
           "type": "PLAY_AUDIO",
           "audio": "die",
           "loop": false,
-          "volume": 0.75
+          "volume": 0.25
         },
          {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/menu"
+          "scene": "../../scenes/gameover"
+        }
+        ,
+        {
+          "type":"PAUSE_ON"
+        },
+        {
+          "type":"REMOVE_UI",
+          "uiID":"pause"
+        },
+        {
+          "type":"EMPTY_INPUT"
         }
            ]
          }
@@ -55,7 +67,7 @@
       "fixtures": [
         {
           "x": 0, "y": 0,
-          "w": 59.2, "h": 59.2,
+          "w": 11.84, "h": 11.84,
           "density": 1,
           "friction": 0,
           "restitution": 1,
@@ -70,7 +82,7 @@
         "x": 0,
         "y": -300,
         "z": -400,
-        "scale": 0.3,
+        "scale": 0.35,
         "r": 1, "g": 1, "b": 1, "alpha": 1,
 
         "slot": "ground",
@@ -89,7 +101,7 @@
           "type": "PLAY_AUDIO",
           "audio": "jump",
           "loop": false,
-          "volume": 0.75
+          "volume": 0.25
         }
       ]
           }
@@ -104,7 +116,7 @@
       "fixtures": [
         {
           "x": 0, "y": 0,
-          "w": 576, "h": 324 ,
+          "w": 672, "h": 378 ,
           "density": 1,
           "friction": 0,
           "restitution":1,
@@ -137,24 +149,13 @@
             "event": [
               
               {
-                "type": "PLAY_AUDIO",
-                "audio": "bgm",
-                "loop": false,
-                "volume": 0.75
+                "type": "ADD_SCORE",
+                "uiID": "score"
               },
               {
                 "type": "DESTROY_ENTITY",
                 "id": "Obstacle1"
               },
-              {
-            "mask": 1,
-            "event": [
-              {
-                "type": "CHANGE_STATE",
-                "state": "Menu"
-              }
-            ]
-          },
               {
                 "type": "SPAWN_ENTITY",
                 "data": {
@@ -177,12 +178,7 @@
         "maskbits": [
           {
             "mask": 1,
-            "event": [
-              {
-                "type": "CHANGE_STATE",
-                "state": "GameOver"
-              }
-            ]
+            "event": []
           },
           {
             "mask": 8,
@@ -197,7 +193,7 @@
         "velocity": { "x": -10,"y": 0 },
 
         "randp": {"max": { "x": 300,"y": 100 } ,"min":{ "x": 300,"y": -100 } },
-        "randv":{"max": { "x": 10,"y": 0 } ,"min":{ "x": 0,"y": 0 } },
+        "randv":{"max": { "x": -1,"y": 0 } ,"min":{ "x": -8,"y": 0 } },
         "id": "Obstacle1"
       },
 
@@ -215,7 +211,34 @@
     }
               }
             ]
-          }
+          },
+         { "mask": 1,
+           "event": [
+            
+              {
+          "type": "PLAY_AUDIO",
+          "audio": "die",
+          "loop": false,
+          "volume": 0.25
+        },
+         {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/gameover"
+        }
+        ,
+        {
+          "type":"PAUSE_ON"
+        },
+        {
+          "type":"REMOVE_UI",
+          "uiID":"pause"
+        },
+        {
+          "type":"EMPTY_INPUT"
+        }
+           ]
+         }
+    
         ],
 
         "bodytype": "static",
@@ -227,7 +250,7 @@
       "fixtures": [
         {
           "x": 0, "y": 0,
-          "w": 10, "h": 200,
+          "w": 50, "h": 216,
           "density": 1,
           "friction": 0,
           "restitution": 0,
@@ -275,7 +298,7 @@
         "velocity": { "x": -10,"y": 0 },
 
         "randp": {"max": { "x": 300,"y": 100 } ,"min":{ "x": 300,"y": -100 } },
-        "randv":{"max": { "x": 10,"y": 0 } ,"min":{ "x": 0,"y": 0 } },
+        "randv":{"max": { "x": -1,"y": 0 } ,"min":{ "x": -8,"y": 0 } },
         "id": "Obstacle1"
       },
 
@@ -297,24 +320,24 @@
   "input": [
     {
       "key": "ArrowLeft",
-      "condition": "pressed",
+      "condition": "hold",
       "event": [
         {
           "type": "MOVE_ENTITY",
           "entityID": "Player",
-          "dx": -1,
+          "dx": -0.05,
           "dy": 0
         }
       ]
     },
     {
       "key": "ArrowRight",
-      "condition": "pressed",
+      "condition": "hold",
       "event": [
         {
           "type": "MOVE_ENTITY",
           "entityID": "Player",
-          "dx": 1,
+          "dx": 0.05,
           "dy": 0
         }
       ]
@@ -344,34 +367,127 @@
     }
   ],
 
-  "ui": [],
+  "ui": [
+
+    {
+      "type": "TextButton",
+      "text": "||",
+
+      "x": -250,
+      "y": 125,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.1,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+       
+          {
+          "type": "LOAD_SCENE",
+          "scene": "../../scenes/pause"
+        },
+        {
+          "type":"PAUSE_ON"
+        }
+        ]
+      },
+
+      "id":"pause"
+    },
+
+    {
+      "type": "TextButton",
+      "text": "<= ( Left ) | ( Right ) =>",
+
+      "x": 0,
+      "y": 125,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.1,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+       
+        ]
+      },
+
+      "id":"instruct"
+    },
+
+    {
+      "type": "TextButton",
+      "text": "Score:0",
+
+      "x": 250,
+      "y": 125,
+      "z": -400,
+
+      "r": 0,
+      "g": 0,
+      "b": 1,
+
+      "alpha": 1,
+
+      "scale": 0.1,
+
+      "slot": 0,
+
+      "action": {
+        "event": [
+        ]
+      },
+
+      "id":"score"
+    }
+
+  ],
 
   "audio": [
      {
       "id": "jump",
-      "path": "../../Resources/jump.mp3"
+      "path": "../../Resources/audio/jump.mp3"
     },
      {
       "id": "die",
-      "path": "../../Resources/die.mp3"
+      "path": "../../Resources/audio/die.mp3"
+    },
+     {
+      "id": "bgm",
+      "path": "../../Resources/audio/bgm.mp3"
     }
   ],
 
   "textures": [
     {
       "id": "player",
-      "path": "../../Resources/3.png",
-      "depth": 5
+      "path": "../../Resources/textures/bird.png",
+      "depth": 1
     },
     {
       "id": "ground",
-      "path": "../../Resources/2.png",
+      "path": "../../Resources/textures/block.png",
       "depth": 2
     },
     {
       "id": "wall",
-      "path": "../../Resources/4.png",
-      "depth": 4
+      "path": "../../Resources/textures/wall.png",
+      "depth": 3
     }
   ]
 }
