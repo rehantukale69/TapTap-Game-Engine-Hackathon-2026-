@@ -152,8 +152,8 @@ export class Renderer {
 
   InitializeFont() {
     this.canvas = document.createElement('canvas');
-    this.canvas.width = 1960;
-    this.canvas.height = 1960;
+    this.canvas.width = 1920;
+    this.canvas.height = 1920;
 
     this.ctx = this.canvas.getContext('2d');
 
@@ -172,7 +172,7 @@ export class Renderer {
 
     let x = 0;
     let y = 0;
-    let padding = 8;
+    let padding = 24;
 
     this.glyphMap = {};
 
@@ -184,7 +184,7 @@ export class Renderer {
       const ascent = metrics.actualBoundingBoxAscent;
       const descent = metrics.actualBoundingBoxDescent;
 
-      const w = Math.ceil(left + right);
+      const w = Math.ceil(right - left);
       const h = Math.ceil(ascent + descent);
 
       // new row if needed
@@ -194,19 +194,31 @@ export class Renderer {
       }
 
       // draw glyph with proper offset
-      const drawX = x + left;
+      const drawX = x - left;
       const drawY = y + ascent;
 
       this.ctx.fillText(char, drawX, drawY);
 
-      // compute UVs
-      const u0 = x / this.canvas.width;
-      const v0 = 1 - (y / this.canvas.height);
-      const u1 = (x + w) / this.canvas.width;
-      const v1 = 1 - ((y + h) / this.canvas.height);
 
-      this.glyphMap[char] =
-          {u0, v0, u1, v1, width: w, height: h, advance: metrics.width};
+      // compute UVs
+      const pad = 1;  // VERY IMPORTANT
+
+      const u0 = (x + pad) / this.canvas.width;
+      const v0 = 1 - ((y + pad) / this.canvas.height);
+      const u1 = (x + w - pad) / this.canvas.width;
+      const v1 = 1 - ((y + h - pad) / this.canvas.height);
+
+      this.glyphMap[char] = {
+        u0,
+        v0,
+        u1,
+        v1,
+        width: w,
+        height: h,
+        advance: Math.max(metrics.width, w),
+        bx: -left,
+        by: ascent
+      };
 
       x += w + padding;
     }
@@ -234,7 +246,7 @@ export class Renderer {
     this.gl.texStorage3D(
         this.gl.TEXTURE_2D_ARRAY,
         1,  // number of mipmap levels (use >1 if using mipmaps)
-        this.gl.RGBA8, 1960, 1960, NumberofTextures);
+        this.gl.RGBA8, 1920, 1920, NumberofTextures);
 
     this.gl.texParameteri(
         this.gl.TEXTURE_2D_ARRAY, this.gl.TEXTURE_WRAP_S,
@@ -245,9 +257,9 @@ export class Renderer {
         this.gl.CLAMP_TO_EDGE);
 
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D_ARRAY, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+        this.gl.TEXTURE_2D_ARRAY, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D_ARRAY, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        this.gl.TEXTURE_2D_ARRAY, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
 
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
 
@@ -284,9 +296,9 @@ export class Renderer {
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D_ARRAY, this.Textures);
 
-        if (img.width > 1960 || img.height > 1960) {
-          img.width = 1960;
-          img.height = 1960;
+        if (img.width > 1920 || img.height > 1920) {
+          img.width = 1920;
+          img.height = 1920;
         }
 
         this.gl.texSubImage3D(

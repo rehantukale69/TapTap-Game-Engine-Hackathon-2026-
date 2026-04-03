@@ -432,7 +432,7 @@
 
     {
       "type": "TextButton",
-      "text": "Score:0",
+      "text": "Score: 0",
 
       "x": 250,
       "y": 125,

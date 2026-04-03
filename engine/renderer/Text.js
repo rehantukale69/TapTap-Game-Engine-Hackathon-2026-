@@ -110,6 +110,10 @@ export class Text {
        Compute text dimensions
     ------------------------------ */
 
+    let minX = 0;
+    let maxX = 0;
+    let penX = 0;
+
     let totalWidth = 0;
     let maxHeight = 0;
 
@@ -118,10 +122,18 @@ export class Text {
 
       if (!g) continue;
 
-      totalWidth += g.advance * scale;
+      let x0 = penX + g.bx * scale;
+      let x1 = x0 + g.width * scale;
+
+      minX = Math.min(minX, x0);
+      maxX = Math.max(maxX, x1);
+
+      penX += g.advance * scale;
 
       maxHeight = Math.max(maxHeight, g.height * scale);
     }
+
+    totalWidth = maxX - minX;
 
     /* ------------------------------
        Center text on given position
@@ -147,11 +159,11 @@ export class Text {
       let h = g.height * scale;
 
       // Character quad positions
-      let x0 = x;
-      let x1 = x + w;
+      let x0 = x + g.bx * scale;
+      let x1 = x0 + w;
 
-      let y0 = y;
-      let y1 = y + h;
+      let y1 = y + g.by * scale;
+      let y0 = y1 - h;
 
       // Add vertices forming the character quad
       this.Vertexes.push(
@@ -175,7 +187,7 @@ export class Text {
       );
 
       // Move cursor forward by glyph advance width
-      x += g.advance * scale;
+      x += (g.advance) * scale;
     }
   }
 
