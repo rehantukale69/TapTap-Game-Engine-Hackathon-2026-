@@ -75,6 +75,10 @@
         },
         {
           "type": "PAUSE_OFF"
+        },
+        {
+          "type": "ENABLE_INPUT",
+          "keys": ["KeyA", "KeyD", "ArrowLeft", "ArrowRight"]
         }
         ]
       },
@@ -111,6 +115,10 @@
         },
         {
           "type": "PAUSE_OFF"
+        },
+        {
+          "type": "ENABLE_INPUT",
+          "keys": ["KeyA", "KeyD", "ArrowLeft", "ArrowRight"]
         }
         ]
       }
@@ -147,6 +155,10 @@
         },
         {
           "type": "PAUSE_OFF"
+        },
+        {
+          "type": "ENABLE_INPUT",
+          "keys": ["KeyA", "KeyD", "ArrowLeft", "ArrowRight"]
         }
         ]
       }

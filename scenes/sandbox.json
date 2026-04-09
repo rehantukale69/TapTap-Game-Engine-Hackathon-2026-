@@ -68,7 +68,7 @@
     },
      {
       "key": "KeyA",
-      "condition": "pressed",
+      "condition": "hold",
       "event": [
        {
         "type":"SPAWN_ENTITY",

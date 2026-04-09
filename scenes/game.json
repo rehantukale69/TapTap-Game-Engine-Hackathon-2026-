@@ -396,6 +396,10 @@
         },
         {
           "type":"PAUSE_ON"
+        },
+        {
+          "type": "DISABLE_INPUT",
+          "keys": ["KeyA", "KeyD", "ArrowLeft", "ArrowRight"]
         }
         ]
       },

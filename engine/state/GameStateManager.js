@@ -76,6 +76,8 @@ export class StateManager {
 
     this.audioEnabled = true;
 
+    this.disabledKeys = new Set();
+
     this.ManageCollisions();
   }
 
@@ -631,6 +633,7 @@ export class StateManager {
     this.LoadInputEvents(data.input);
     this.LoadUI(data.ui);
     this.LoadAudio(data.audio);
+    this.SyncAudioUI();
     this.Masks = this.LoadMasks(data.masks);
 
     this.SyncEngine();
@@ -913,6 +916,34 @@ export class StateManager {
           u.RenderObject.update();
         }
         break;
+
+      case 'SET_AUDIO':
+
+        if (u && u.RenderObject) {
+          let newSlot = this.audioEnabled ? 'audio_on' : 'audio_off';
+
+          u.RenderObject.slot = this.Engine.TextureMap[newSlot];
+          u.slot = newSlot;
+
+          u.RenderObject.update();
+        }
+        break;
+
+      case 'DISABLE_INPUT':
+        if (Array.isArray(event.keys)) {
+          for (let key of event.keys) {
+            this.disabledKeys.add(key);
+          }
+        }
+        break;
+
+      case 'ENABLE_INPUT':
+        if (Array.isArray(event.keys)) {
+          for (let key of event.keys) {
+            this.disabledKeys.delete(key);
+          }
+        }
+        break;
     }
   }
 
@@ -972,6 +1003,19 @@ export class StateManager {
     });
   }
 
+  SyncAudioUI() {
+    for (let ui of this.UI) {
+      if (ui.ID === 'audio' && ui.RenderObject) {
+        let newSlot = this.audioEnabled ? 'audio_on' : 'audio_off';
+
+        ui.RenderObject.slot = this.Engine.TextureMap[newSlot];
+        ui.slot = newSlot;
+
+        ui.RenderObject.update();
+      }
+    }
+  }
+
 
   update(mx, my, click) {
     // Update entities
@@ -996,6 +1040,8 @@ export class StateManager {
 
     // Process input bindings
     for (let input of (this.InputEvents || [])) {
+      if (this.disabledKeys.has(input.key)) continue;
+
       let triggered = false;
 
       if (input.condition === 'pressed' && this.UISystem.isPressed(input.key))
