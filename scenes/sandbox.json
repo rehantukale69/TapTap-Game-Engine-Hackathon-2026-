@@ -62,7 +62,7 @@
         },
         {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/menu"
+          "scene": "./scenes/menu"
         }
       ]
     },
@@ -157,7 +157,7 @@
         },
           {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/menu"
+          "scene": "./scenes/menu"
         }
         ]
       },
@@ -191,7 +191,7 @@
         },
           {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/menu"
+          "scene": "./scenes/menu"
         }
         ]
       },
@@ -208,7 +208,7 @@
     
     {
       "id": "ground",
-      "path": "../../Resources/textures/block.png",
+      "path": "./Resources/textures/block.png",
       "depth": 2
     }
     

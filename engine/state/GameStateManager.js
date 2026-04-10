@@ -528,8 +528,6 @@ export class StateManager {
 
     this.reset();
 
-    this.EntityMap.clear();
-    this.UIMap.clear();
 
 
     this.LoadfromDisk(this.gameState);
@@ -619,8 +617,12 @@ export class StateManager {
 
 
     this.gravity = data.physics;
+    this.simulationWorld.world.setGravity(
+        this.simulationWorld.pl.Vec2(this.gravity[0], this.gravity[1]));
 
-    this.CameraPos = data.camera;
+    this.Engine.CameraPos = data.camera;
+
+    console.log(this.Engine.cameraPos);
 
     await this.LoadTextures(data.textures);
 
@@ -1087,6 +1089,9 @@ export class StateManager {
 
     this.audio.sounds = {};
     this.audio.soundspath = {};
+
+    this.EntityMap.clear();
+    this.UIMap.clear();
   }
 
   /*

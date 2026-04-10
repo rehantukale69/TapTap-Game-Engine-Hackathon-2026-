@@ -104,7 +104,7 @@
         },
         {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/game"
+          "scene": "./scenes/game"
         }
       ]
     }
@@ -138,7 +138,7 @@
         },
           {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/game"
+          "scene": "./scenes/game"
         }
         ]
       },
@@ -171,7 +171,7 @@
         },
           {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/sandbox"
+          "scene": "./scenes/sandbox"
         }
         ]
       },
@@ -225,22 +225,22 @@
 
     {
       "id": "player",
-      "path": "../../Resources/textures/bird.png",
+      "path": "./Resources/textures/bird.png",
       "depth": 1
     },
     {
       "id": "ground",
-      "path": "../../Resources/textures/block.png",
+      "path": "./Resources/textures/block.png",
       "depth": 2
     },
     {
       "id": "audio_off",
-      "path": "../../Resources/textures/off.png",
+      "path": "./Resources/textures/off.png",
       "depth":3
     },
     {
       "id": "audio_on",
-      "path": "../../Resources/textures/on.png",
+      "path": "./Resources/textures/on.png",
       "depth": 4
     }
   ]

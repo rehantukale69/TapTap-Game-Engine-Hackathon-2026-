@@ -111,7 +111,7 @@
         },
          {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/game"
+          "scene": "./scenes/game"
         },
         {
           "type": "PAUSE_OFF"
@@ -151,7 +151,7 @@
         },
           {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/menu"
+          "scene": "./scenes/menu"
         },
         {
           "type": "PAUSE_OFF"

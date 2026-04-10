@@ -131,11 +131,10 @@ export class Renderer {
     let count = 0;
     for (let v of Vertexes) {
       this.Vertices.push(
-          v.Location[0], v.Location[1], v.Location[2], v.Color[0], v.Color[1],
-          v.Color[2], v.Color[3], v.Slot, v.TextureCoordinates[0],
-          v.TextureCoordinates[1], v.theta, v.Pivot[0], v.Pivot[1], v.Offset[0],
-          v.Offset[1]);
-
+          v.Location[0] + this.CameraPos[0], v.Location[1] + this.CameraPos[1],
+          v.Location[2] + this.CameraPos[2], v.Color[0], v.Color[1], v.Color[2],
+          v.Color[3], v.Slot, v.TextureCoordinates[0], v.TextureCoordinates[1],
+          v.theta, v.Pivot[0], v.Pivot[1], v.Offset[0], v.Offset[1]);
 
 
       count++;

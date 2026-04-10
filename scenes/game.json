@@ -41,7 +41,7 @@
         },
          {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/gameover"
+          "scene": "./scenes/gameover"
         }
         ,
         {
@@ -223,7 +223,7 @@
         },
          {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/gameover"
+          "scene": "./scenes/gameover"
         }
         ,
         {
@@ -392,7 +392,7 @@
        
           {
           "type": "LOAD_SCENE",
-          "scene": "../../scenes/pause"
+          "scene": "./scenes/pause"
         },
         {
           "type":"PAUSE_ON"
@@ -465,32 +465,32 @@
   "audio": [
      {
       "id": "jump",
-      "path": "../../Resources/audio/jump.mp3"
+      "path": "./Resources/audio/jump.mp3"
     },
      {
       "id": "die",
-      "path": "../../Resources/audio/die.mp3"
+      "path": "./Resources/audio/die.mp3"
     },
      {
       "id": "bgm",
-      "path": "../../Resources/audio/bgm.mp3"
+      "path": "./Resources/audio/bgm.mp3"
     }
   ],
 
   "textures": [
     {
       "id": "player",
-      "path": "../../Resources/textures/bird.png",
+      "path": "./Resources/textures/bird.png",
       "depth": 1
     },
     {
       "id": "ground",
-      "path": "../../Resources/textures/block.png",
+      "path": "./Resources/textures/block.png",
       "depth": 2
     },
     {
       "id": "wall",
-      "path": "../../Resources/textures/wall.png",
+      "path": "./Resources/textures/wall.png",
       "depth": 3
     }
   ]

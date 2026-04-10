@@ -50,7 +50,7 @@ export class Manager {
     this.StateManager.SyncEngine();
 
     this.StateManager.reset();
-    this.StateManager.LoadfomDisk('../../scenes/menu');
+    this.StateManager.LoadfomDisk('./scenes/menu');
     this.StateManager.SyncEngine();
   }
   update() {};
